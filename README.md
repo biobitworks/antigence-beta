@@ -193,6 +193,14 @@ If you do not need training data, you can skip these downloads.
 - **Use templates**: Copy `config/antigence_mcp_config.json.example` to
   `config/antigence_mcp_config.json` and fill in local paths.
 
+## Enterprise and Commercial
+
+Antigence is open source, with an **open-core** model for enterprise users.
+If you need hosted deployments, SLAs, onboarding, or enterprise features
+(SSO, audit trails, compliance tooling), contact us:
+
+- **Enterprise contact**: enterprise@biobitworks.com
+
 ## Applications
 
 ### 1. Self/Non-Self Code Security
