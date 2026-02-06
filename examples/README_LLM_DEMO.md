@@ -26,7 +26,7 @@ This demo shows all 6 immune system agents enhanced with local LLM capabilities:
 
 ```bash
 # From the project root
-cd /Users/byron/projects/immunos-mcp
+cd /path/to/immunos-mcp
 
 # Run the automated setup
 ./examples/setup_ollama.sh

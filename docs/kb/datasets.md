@@ -46,7 +46,7 @@
 
 ```bash
 # Run from antigence directory
-cd /Users/byron/projects/active_projects/antigence
+cd /path/to/antigence
 
 # CodeXGLUE (HuggingFace)
 python3 -c "from datasets import load_dataset; ds = load_dataset('code_x_glue_cc_defect_detection'); ds.save_to_disk('~/.antigence/data/codexglue')"

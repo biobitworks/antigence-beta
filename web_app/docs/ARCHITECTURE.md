@@ -229,7 +229,7 @@ Currently, only the **orchestrator role** is actively used (Thymus). Other roles
 ## File Locations
 
 ```
-/Users/byron/projects/active_projects/antigence/
+/path/to/antigence/
 ├── src/immunos_mcp/
 │   ├── agents/
 │   │   ├── bcell_agent.py          # Pattern matcher

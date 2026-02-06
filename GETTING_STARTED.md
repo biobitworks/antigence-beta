@@ -64,7 +64,7 @@ ollama pull nomic-embed-text
 
 ```bash
 # Add to PATH (one time)
-export PATH="/Users/byron/projects/bin:$PATH"
+export PATH="$HOME/projects/bin:$PATH"
 
 # Analyze code for vulnerabilities
 antigence analyze 'eval(user_input)'

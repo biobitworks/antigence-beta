@@ -143,11 +143,11 @@ print(result.confidence)      # 0.7 (example)
 
 ### Command Line Interface
 
-A unified CLI is available at `/Users/byron/projects/bin/antigence`:
+A unified CLI is available at `$HOME/projects/bin/antigence`:
 
 ```bash
 # Add to PATH (in ~/.zshrc)
-export PATH="/Users/byron/projects/bin:$PATH"
+export PATH="$HOME/projects/bin:$PATH"
 
 # Show help
 antigence help

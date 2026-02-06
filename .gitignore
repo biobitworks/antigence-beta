@@ -70,3 +70,5 @@ VERSION.md
 # Large dictionaries (download separately)
 data/dictionaries/*.jsonld
 data/dictionaries/*.jsonld.gz
+# Internal cases (not for public repo)
+cases/

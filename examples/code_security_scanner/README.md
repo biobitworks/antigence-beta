@@ -69,7 +69,7 @@ This example demonstrates **IMMUNOS-MCP** agents working together to identify se
 ### Installation
 
 ```bash
-cd /Users/byron/projects/immunos-mcp
+cd /path/to/immunos-mcp
 source .venv/bin/activate  # or: .venv/bin/activate
 
 # Install dependencies

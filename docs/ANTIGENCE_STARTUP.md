@@ -6,7 +6,7 @@
 ## 🏗️ Architecture Overview
 
 ```
-/Users/byron/projects/              ← Working directory (all projects)
+/path/to/projects/                  ← Working directory (all projects)
 ├── .immunos/                       ← Hidden OS layer (context database)
 │   ├── memory/                     ← Shared memory across all agents
 │   ├── snapshots/                  ← Context checkpoints
@@ -181,7 +181,7 @@ python3 scripts/immunos_snapshot.py create \
 ### Why Hidden (.immunos)?
 
 **Pros of hiding:**
-1. Keeps `/Users/byron/projects/` clean for actual projects
+1. Keeps `/path/to/projects/` clean for actual projects
 2. System files don't clutter file browser
 3. Conventional (like `.git/`, `.vscode/`)
 4. Prevents accidental edits to critical files
@@ -245,7 +245,7 @@ immunos-save "msg"  # Quick snapshot
 
 ## 📊 Current State
 
-**Working Directory**: `/Users/byron/projects/`
+**Working Directory**: `/path/to/projects/`
 
 **Active Projects**:
 - `antigence-alpha/` - Web app (future MCP server?)
@@ -273,7 +273,7 @@ cat .immunos/journal/$(date +%Y-%m-%d).md
 **Want journals visible?**
 ```bash
 # Option: Symlink to daily/
-ln -s /Users/byron/projects/.immunos/journal ~/projects/journals-immunos
+ln -s /path/to/.immunos/journal ~/projects/journals-immunos
 ```
 
 **Recovery file outdated?**
@@ -291,4 +291,4 @@ cat .immunos/memory/snapshots/latest.json | jq
 
 **Antigence Multi-Agent System**
 *Built on IMMUNOS Context Management*
-*Working Directory: `/Users/byron/projects/`*
+*Working Directory: `/path/to/projects/`*

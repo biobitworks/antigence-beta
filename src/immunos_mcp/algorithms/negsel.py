@@ -94,7 +94,7 @@ class NegativeSelectionClassifier:
             self.config = config
             
         self.class_label = class_label
-        self.db_path = db_path or os.getenv("IMMUNOS_DB") or "/Users/byron/projects/.immunos/db/immunos.db"
+        self.db_path = db_path or os.getenv("IMMUNOS_DB") or os.path.expanduser("~/.immunos/db/immunos.db")
         
         self.valid_detectors: List[Detector] = []
         self.feature_dim: int = 0

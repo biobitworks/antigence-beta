@@ -29,11 +29,11 @@ Create/edit: `~/.config/claude/mcp_settings.json`
     "antigence": {
       "command": "python3",
       "args": [
-        "/Users/byron/projects/antigence-alpha/src/immunos_mcp/servers/simple_mcp_server.py"
+        "/path/to/antigence/src/immunos_mcp/servers/simple_mcp_server.py"
       ],
-      "cwd": "/Users/byron/projects/antigence-alpha",
+      "cwd": "/path/to/antigence",
       "env": {
-        "PYTHONPATH": "/Users/byron/projects/antigence-alpha/src"
+        "PYTHONPATH": "/path/to/antigence/src"
       }
     }
   }
@@ -61,7 +61,7 @@ If `uv` is installed:
         "run",
         "immunos-mcp-mvp"
       ],
-      "cwd": "/Users/byron/projects/antigence-alpha"
+      "cwd": "/path/to/antigence"
     }
   }
 }
@@ -79,11 +79,11 @@ Create/edit: `~/Library/Application Support/Claude/claude_desktop_config.json`
     "antigence": {
       "command": "python3",
       "args": [
-        "/Users/byron/projects/antigence-alpha/src/immunos_mcp/servers/simple_mcp_server.py"
+        "/path/to/antigence/src/immunos_mcp/servers/simple_mcp_server.py"
       ],
-      "cwd": "/Users/byron/projects/antigence-alpha",
+      "cwd": "/path/to/antigence",
       "env": {
-        "PYTHONPATH": "/Users/byron/projects/antigence-alpha/src"
+        "PYTHONPATH": "/path/to/antigence/src"
       }
     }
   }
@@ -102,7 +102,7 @@ For Ollama models, you need to expose Antigence via a different method since the
 
 Create an HTTP API wrapper around the MCP server:
 
-**File**: `/Users/byron/projects/antigence-alpha/scripts/antigence_api.py`
+**File**: `/path/to/antigence/scripts/antigence_api.py`
 
 ```python
 #!/usr/bin/env python3
@@ -113,7 +113,7 @@ Exposes IMMUNOS MCP tools via REST API for Ollama agents
 
 from flask import Flask, request, jsonify
 import sys
-sys.path.insert(0, '/Users/byron/projects/antigence-alpha/src')
+sys.path.insert(0, '/path/to/antigence/src')
 
 from immunos_mcp.core.antigen import Antigen, DataType
 from immunos_mcp.orchestrator.manager import OrchestratorManager
@@ -176,7 +176,7 @@ if __name__ == '__main__':
 
 **Start the API**:
 ```bash
-python3 /Users/byron/projects/antigence-alpha/scripts/antigence_api.py
+python3 /path/to/antigence/scripts/antigence_api.py
 ```
 
 **Use from Ollama**:
@@ -196,7 +196,7 @@ When Qwen Coder writes Python scripts, it can directly import IMMUNOS:
 
 ```python
 import sys
-sys.path.insert(0, '/Users/byron/projects/antigence-alpha/src')
+sys.path.insert(0, '/path/to/antigence/src')
 
 from immunos_mcp.core.antigen import Antigen
 from immunos_mcp.orchestrator.manager import OrchestratorManager
@@ -228,13 +228,13 @@ print(f"Anomaly: {result.anomaly}")
 
 Antigence can use the IMMUNOS memory system for persistent context:
 
-**File**: `/Users/byron/projects/antigence-alpha/config/immunos_integration.json`
+**File**: `/path/to/antigence/config/immunos_integration.json`
 
 ```json
 {
-  "immunos_base_path": "/Users/byron/projects/.immunos",
-  "memory_path": "/Users/byron/projects/.immunos/memory",
-  "snapshots_path": "/Users/byron/projects/.immunos/memory/snapshots",
+  "immunos_base_path": "/path/to/.immunos",
+  "memory_path": "/path/to/.immunos/memory",
+  "snapshots_path": "/path/to/.immunos/memory/snapshots",
   "enable_context_persistence": true,
   "enable_agent_logging": true
 }
@@ -247,7 +247,7 @@ Antigence can use the IMMUNOS memory system for persistent context:
 import json
 from pathlib import Path
 
-immunos_config = Path('/Users/byron/projects/antigence-alpha/config/immunos_integration.json')
+immunos_config = Path('/path/to/antigence/config/immunos_integration.json')
 if immunos_config.exists():
     with open(immunos_config) as f:
         immunos_settings = json.load(f)
@@ -298,7 +298,7 @@ Update agent startup scripts to include Antigence:
 # Qwen Coder with Antigence API
 
 echo "🧬 Starting Antigence API server..."
-python3 /Users/byron/projects/antigence-alpha/scripts/antigence_api.py &
+python3 /path/to/antigence/scripts/antigence_api.py &
 ANTIGENCE_PID=$!
 
 echo "Starting Qwen Coder..."
