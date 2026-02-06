@@ -1,0 +1,43 @@
+id: code-v1
+name: Code Security Pack
+domain: code
+version: 1.0.0
+features:
+  - name: dendritic_code_features
+    inputs: [code_diff, code_context]
+receptors:
+  nk:
+    detector_set: nk_code_v1.json
+    mode: feature
+  bcell:
+    classifier: bcell_code_v1.pt
+    labels: [safe, vulnerable]
+  tcell:
+    memory_store: tcell_code_v1
+thresholds:
+  nk: 0.95
+  bcell: 0.80
+hardware_tiers:
+  tier0_airgapped:
+    models: [qwen2.5:1.5b]
+    max_memory_gb: 8
+  tier1_laptop:
+    models: [qwen2.5:7b]
+    max_memory_gb: 32
+  tier2_workstation:
+    models: [deepseek-r1:14b]
+    max_memory_gb: 128
+  tier3_cloud:
+    models: [claude-opus-4.5]
+    max_memory_gb: 512
+data_sources:
+  train: [DiverseVul]
+  eval: [DiverseVul-dev]
+metrics:
+  - nk_f1
+  - bcell_f1
+policies:
+  - block_if_vulnerable
+notes: "Requires DiverseVul download and code_trainer update for vulnerable samples."
+owner: "immunOS"
+dependencies: ["diversevul"]

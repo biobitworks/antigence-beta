@@ -1,0 +1,49 @@
+id: hallucination-v1
+name: Hallucination Control Pack
+domain: hallucination
+version: 1.0.0
+features:
+  - name: dendritic_hallucination_features
+    inputs: [response_text, prompt_text, citations]
+receptors:
+  nk:
+    detector_set: nk_hallucination_v1.json
+    mode: feature
+  bcell:
+    classifier: bcell_hallucination_v1.pt
+    labels: [truthful, hallucinated]
+  tcell:
+    memory_store: tcell_hallucination_v1
+thresholds:
+  nk: 0.997
+  bcell: 0.80
+defaults:
+  evidence_mode: claim_only
+  bcell_embedder: simple_text
+  nk_semantic_embedder: bge-m3
+  nk_threshold: 0.997
+hardware_tiers:
+  tier0_airgapped:
+    models: [qwen2.5:1.5b]
+    max_memory_gb: 8
+  tier1_laptop:
+    models: [qwen2.5:7b]
+    max_memory_gb: 32
+  tier2_workstation:
+    models: [deepseek-r1:14b]
+    max_memory_gb: 128
+  tier3_cloud:
+    models: [claude-opus-4.5]
+    max_memory_gb: 512
+data_sources:
+  train: [TruthfulQA]
+  eval: [TruthfulQA-dev]
+metrics:
+  - nk_f1
+  - bcell_f1
+policies:
+  - block_if_unverified
+  - require_uncertainty_markers
+notes: "Current dendritic features are tuned for scientific claims; update for hallucination-specific patterns."
+owner: "immunOS"
+dependencies: []

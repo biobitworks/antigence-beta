@@ -1,0 +1,20 @@
+# Correct -> Common misspellings
+Nature -> Natrure, Natrue, Naturee, Natur
+Science -> Sciecne, Sciense, Sceince, Scince
+Cell -> Cel, Ceel, Celll
+Lancet -> Lacnet, Lnacet, Lancte
+JAMA -> JAAM, JAMAA, JAM
+PNAS -> PNSA, PANS, PNASS
+PLOS -> PLSO, PLOSS, PLO
+eLife -> eLIfe, elife, Elife, ELife
+Nature Medicine -> Nature Medecine, Natrure Medicine
+Nature Genetics -> Nature Gentics, Natrure Genetics
+NEJM -> NJEM, NEMJ, NJM
+BMJ -> BM, BMM, BMJJ
+Circulation -> Circulaiton, Circualtion
+Blood -> Blod, Bloodd, Bllod
+Brain -> Barin, Brainn
+Gut -> Gtu, Gutt
+Heart -> Haert, Heartt
+Immunity -> Immnuity, Immunty
+Neuron -> Nueron, Neruon

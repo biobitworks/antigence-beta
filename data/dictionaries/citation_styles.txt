@@ -1,0 +1,27 @@
+# APA Style
+Smith, J. A., & Jones, B. C. (2023). Title of article. Journal Name, 45(2), 123-145.
+Smith, J. A., Jones, B. C., & Williams, D. E. (2023). Title here. Nature, 612, 234-238.
+
+# Vancouver Style (numbered)
+Smith JA, Jones BC. Title of article. Journal Name. 2023;45(2):123-145.
+Smith JA, Jones BC, Williams DE. Title. Nature. 2023;612:234-8.
+
+# Chicago Style
+Smith, John A., and Brian C. Jones. "Title of Article." Journal Name 45, no. 2 (2023): 123-145.
+Smith, John A., Brian C. Jones, and David E. Williams. "Title." Nature 612 (2023): 234-238.
+
+# MLA Style
+Smith, John A., and Brian C. Jones. "Title of Article." Journal Name, vol. 45, no. 2, 2023, pp. 123-145.
+
+# Harvard Style
+Smith, J.A. and Jones, B.C. (2023) 'Title of article', Journal Name, 45(2), pp. 123-145.
+Smith, J.A., Jones, B.C. and Williams, D.E. (2023) 'Title', Nature, 612, pp. 234-238.
+
+# IEEE Style
+J. A. Smith and B. C. Jones, "Title of article," Journal Name, vol. 45, no. 2, pp. 123-145, 2023.
+
+# Nature Style
+Smith, J. A., Jones, B. C. & Williams, D. E. Title. Nature 612, 234-238 (2023).
+
+# Science Style
+J. A. Smith, B. C. Jones, D. E. Williams, Title. Science 380, 123-128 (2023).

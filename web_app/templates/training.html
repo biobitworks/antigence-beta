@@ -1,0 +1,368 @@
+{% extends "base.html" %}
+
+{% block title %}Live Training - IMMUNOS-MCP{% endblock %}
+
+{% block breadcrumb %}
+<nav aria-label="breadcrumb" class="container mt-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active">Live Training</li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1><i class="fas fa-graduation-cap text-success"></i> Live Training Interface</h1>
+            <p class="lead">Contribute training data and watch the system learn in real-time</p>
+        </div>
+    </div>
+
+    <!-- Stats Overview -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-database fa-2x text-primary mb-2"></i>
+                    <h4>{{ stats.total_patterns }}</h4>
+                    <p class="text-muted mb-0">Total Patterns</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-search fa-2x text-success mb-2"></i>
+                    <h4>{{ stats.total_analyses }}</h4>
+                    <p class="text-muted mb-0">Analyses Run</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-paper-plane fa-2x text-info mb-2"></i>
+                    <h4>{{ stats.total_submissions }}</h4>
+                    <p class="text-muted mb-0">Submissions</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fas fa-check-circle fa-2x text-warning mb-2"></i>
+                    <h4 id="accuracy">--</h4>
+                    <p class="text-muted mb-0">System Accuracy</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Training Submission -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-success text-white">
+                    <i class="fas fa-plus-circle"></i> Submit Training Example
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="domainSelect" class="form-label">Domain:</label>
+                        <select class="form-select" id="domainSelect" onchange="updateLabels()">
+                            <option value="security">Code Security</option>
+                            <option value="emotion">Emotion Detection</option>
+                            <option value="spam">Email Classification</option>
+                            <option value="network">Network Intrusion</option>
+                            <option value="hallucination">Publication Hallucination</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="labelSelect" class="form-label">Label:</label>
+                        <select class="form-select" id="labelSelect">
+                            <option value="safe">Safe</option>
+                            <option value="vulnerable">Vulnerable</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="dataInput" class="form-label">Training Data:</label>
+                        <textarea class="form-control" id="dataInput" rows="6" placeholder="Enter your training example here..."></textarea>
+                    </div>
+                    <button class="btn btn-success w-100" onclick="submitTraining()">
+                        <i class="fas fa-upload"></i> Submit Training Example
+                    </button>
+                    <div id="submitResult" class="mt-3"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Domain Distribution -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-dark text-white">
+                    <i class="fas fa-chart-pie"></i> Pattern Distribution
+                </div>
+                <div class="card-body">
+                    <div id="distributionChart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Training Progress -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-chart-line"></i> Training Progress
+                </div>
+                <div class="card-body">
+                    <div id="progressChart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Domain Breakdown -->
+    <div class="row mt-4">
+        <div class="col-lg-2 col-md-4 col-6 mb-3">
+            <div class="card h-100">
+                <div class="card-header bg-danger text-white py-2">
+                    <i class="fas fa-code"></i> Security
+                </div>
+                <div class="card-body text-center py-2">
+                    <h4>{{ stats.patterns_by_domain.security }}</h4>
+                    <p class="text-muted mb-0 small">patterns</p>
+                    <div class="progress mt-2" style="height: 6px;">
+                        <div class="progress-bar bg-danger" style="width: {% if stats.total_patterns > 0 %}{{ (stats.patterns_by_domain.security / stats.total_patterns * 100)|int }}{% else %}0{% endif %}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-6 mb-3">
+            <div class="card h-100">
+                <div class="card-header bg-primary text-white py-2">
+                    <i class="fas fa-smile"></i> Emotion
+                </div>
+                <div class="card-body text-center py-2">
+                    <h4>{{ stats.patterns_by_domain.emotion }}</h4>
+                    <p class="text-muted mb-0 small">patterns</p>
+                    <div class="progress mt-2" style="height: 6px;">
+                        <div class="progress-bar bg-primary" style="width: {% if stats.total_patterns > 0 %}{{ (stats.patterns_by_domain.emotion / stats.total_patterns * 100)|int }}{% else %}0{% endif %}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-6 mb-3">
+            <div class="card h-100">
+                <div class="card-header bg-success text-white py-2">
+                    <i class="fas fa-envelope"></i> Spam
+                </div>
+                <div class="card-body text-center py-2">
+                    <h4>{{ stats.patterns_by_domain.spam }}</h4>
+                    <p class="text-muted mb-0 small">patterns</p>
+                    <div class="progress mt-2" style="height: 6px;">
+                        <div class="progress-bar bg-success" style="width: {% if stats.total_patterns > 0 %}{{ (stats.patterns_by_domain.spam / stats.total_patterns * 100)|int }}{% else %}0{% endif %}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-6 mb-3">
+            <div class="card h-100">
+                <div class="card-header bg-warning text-dark py-2">
+                    <i class="fas fa-network-wired"></i> Network
+                </div>
+                <div class="card-body text-center py-2">
+                    <h4>{{ stats.patterns_by_domain.network }}</h4>
+                    <p class="text-muted mb-0 small">patterns</p>
+                    <div class="progress mt-2" style="height: 6px;">
+                        <div class="progress-bar bg-warning" style="width: {% if stats.total_patterns > 0 %}{{ (stats.patterns_by_domain.network / stats.total_patterns * 100)|int }}{% else %}0{% endif %}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-6 mb-3">
+            <div class="card h-100">
+                <div class="card-header bg-info text-white py-2">
+                    <i class="fas fa-file-alt"></i> Hallucination
+                </div>
+                <div class="card-body text-center py-2">
+                    <h4>{{ stats.patterns_by_domain.hallucination }}</h4>
+                    <p class="text-muted mb-0 small">patterns</p>
+                    <div class="progress mt-2" style="height: 6px;">
+                        <div class="progress-bar bg-info" style="width: {% if stats.total_patterns > 0 %}{{ (stats.patterns_by_domain.hallucination / stats.total_patterns * 100)|int }}{% else %}0{% endif %}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Submissions -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span><i class="fas fa-history"></i> Recent Activity</span>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="refreshStats()">
+                        <i class="fas fa-sync"></i> Refresh
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="activityTable">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Domain</th>
+                                    <th>Type</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="activityBody">
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted">No recent activity</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+const domainLabels = {
+    security: ['safe', 'vulnerable'],
+    emotion: ['joy', 'sadness', 'anger', 'fear', 'neutral'],
+    spam: ['ham', 'spam', 'phishing'],
+    network: ['normal', 'dos', 'probe', 'r2l', 'u2r'],
+    hallucination: ['truthful', 'hallucinated']
+};
+
+function updateLabels() {
+    const domain = document.getElementById('domainSelect').value;
+    const labelSelect = document.getElementById('labelSelect');
+    const labels = domainLabels[domain];
+
+    labelSelect.innerHTML = labels.map(l =>
+        `<option value="${l}">${l.charAt(0).toUpperCase() + l.slice(1)}</option>`
+    ).join('');
+}
+
+async function submitTraining() {
+    const domain = document.getElementById('domainSelect').value;
+    const label = document.getElementById('labelSelect').value;
+    const data = document.getElementById('dataInput').value;
+    const resultDiv = document.getElementById('submitResult');
+
+    if (!data.trim()) {
+        resultDiv.innerHTML = '<div class="alert alert-warning">Please enter training data</div>';
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/submit_training', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ domain, label, data })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            resultDiv.innerHTML = `<div class="alert alert-success"><i class="fas fa-check"></i> ${result.message}</div>`;
+            document.getElementById('dataInput').value = '';
+            addActivityRow(domain, 'submission', 'pending');
+            refreshStats();
+        } else {
+            resultDiv.innerHTML = `<div class="alert alert-danger">${result.message}</div>`;
+        }
+    } catch (error) {
+        resultDiv.innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
+    }
+}
+
+function addActivityRow(domain, type, status) {
+    const tbody = document.getElementById('activityBody');
+    const now = new Date().toLocaleTimeString();
+
+    const statusBadge = status === 'pending'
+        ? '<span class="badge bg-warning">Pending</span>'
+        : '<span class="badge bg-success">Accepted</span>';
+
+    const row = document.createElement('tr');
+    row.innerHTML = `
+        <td>${now}</td>
+        <td><span class="badge bg-secondary">${domain}</span></td>
+        <td>${type}</td>
+        <td>${statusBadge}</td>
+    `;
+
+    if (tbody.querySelector('td[colspan]')) {
+        tbody.innerHTML = '';
+    }
+    tbody.insertBefore(row, tbody.firstChild);
+}
+
+async function refreshStats() {
+    try {
+        const response = await fetch('/api/stats');
+        const stats = await response.json();
+        updateCharts(stats);
+    } catch (error) {
+        console.error('Failed to refresh stats:', error);
+    }
+}
+
+function updateCharts(stats) {
+    // Distribution chart
+    Plotly.newPlot('distributionChart', [{
+        values: [
+            stats.patterns_by_domain.security || 0,
+            stats.patterns_by_domain.emotion || 0,
+            stats.patterns_by_domain.spam || 0,
+            stats.patterns_by_domain.network || 0,
+            stats.patterns_by_domain.hallucination || 0
+        ],
+        labels: ['Security', 'Emotion', 'Spam', 'Network', 'Hallucination'],
+        type: 'pie',
+        marker: {
+            colors: ['#dc3545', '#0d6efd', '#198754', '#ffc107', '#0dcaf0']
+        }
+    }], {
+        margin: { t: 20, b: 20, l: 20, r: 20 },
+        height: 250,
+        showlegend: true
+    });
+
+    // Progress chart (simulated)
+    const x = Array.from({length: 10}, (_, i) => `Day ${i + 1}`);
+    const y = Array.from({length: 10}, (_, i) => Math.min(stats.total_patterns, 2 + i * 0.5 + Math.random()));
+
+    Plotly.newPlot('progressChart', [{
+        x: x,
+        y: y,
+        type: 'scatter',
+        mode: 'lines+markers',
+        name: 'Patterns',
+        line: { color: '#198754' }
+    }], {
+        title: 'Pattern Growth Over Time',
+        xaxis: { title: 'Time' },
+        yaxis: { title: 'Total Patterns' },
+        margin: { t: 40, b: 40, l: 50, r: 20 },
+        height: 250
+    });
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    refreshStats();
+});
+</script>
+{% endblock %}

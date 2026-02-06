@@ -1,0 +1,72 @@
+# Private files
+context.json
+blog/
+web_app/data/immunos.db
+web_app/.immunos/
+data/immunos_data/
+runs/
+.DS_Store
+
+# Publication Build Artifacts
+antigence-tier1-zenodo.zip
+
+# -----------------------------------------------------------------------------
+# Current repo layout (environment-agnostic ignores)
+# -----------------------------------------------------------------------------
+
+# OS/editor noise
+.DS_Store
+.env
+.env.*
+.vscode/
+
+# Python build artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Web app runtime artifacts
+web_app/data/immunos.db
+web_app/web_app.log
+web_app/data/*.db
+
+# Local immunOS artifacts (models/snapshots/logs)
+.immunos/
+
+# Local config (use example template for public repo)
+config/antigence_mcp_config.json
+
+# Generated mirror files (avoid publishing code mirrors)
+*.py.md
+*.json.md
+*.sh.md
+*.mmd.md
+*.csv.md
+*.pdf.md
+*.html.md
+*.js.md
+*.ts.md
+*.yaml.md
+*.yml.md
+*.yaml.example.md
+*.yml.example.md
+*.txt.md
+*.cff.md
+*.bib.md
+*.toml.md
+*.db.md
+*.log.md
+*.css.md
+*.png.md
+*.jpg.md
+*.jpeg.md
+*.svg.md
+.DS_Store.md
+.gitignore.md
+LICENSE.md
+VERSION.md
+
+# Large dictionaries (download separately)
+data/dictionaries/*.jsonld
+data/dictionaries/*.jsonld.gz

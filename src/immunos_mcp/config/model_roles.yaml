@@ -1,0 +1,5 @@
+b_cell: qwen2.5-coder:7b
+nk_cell: deepseek-r1:14b
+t_cell: deepseek-r1:14b
+dendritic: qwen2.5:1.5b
+memory: qwen2.5:1.5b

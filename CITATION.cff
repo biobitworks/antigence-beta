@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Byron"
+  given-names: "Antigence Project"
+title: "Antigence Alpha: IMMUNOS-MCP Bio-inspired Immune System"
+version: 0.1.0-alpha
+date-released: 2026-01-05
+doi: "10.5281/zenodo.18109862"
+url: "https://doi.org/10.5281/zenodo.18109862"
+repository-code: "https://github.com/byron/antigence-alpha"
+abstract: "A mathematically rigorous Artificial Immune System (AIS) for multimodal anomaly detection in bio-signals and LLM hallucinations."
+keywords:
+  - Artificial Immune System
+  - Negative Selection
+  - LLM Safety
+  - BioRxiv
+  - Tier 1

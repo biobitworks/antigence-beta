@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}500 - Server Error{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6 text-center">
+            <div class="card shadow">
+                <div class="card-body py-5">
+                    <i class="fas fa-biohazard fa-5x text-warning mb-4"></i>
+                    <h1 class="display-4">500</h1>
+                    <h2 class="mb-4">Internal Server Error</h2>
+                    <p class="lead text-muted mb-4">
+                        The immune system encountered an unexpected pathogen.
+                        Our agents are working to contain the issue.
+                    </p>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                        <a href="/" class="btn btn-primary btn-lg">
+                            <i class="fas fa-home"></i> Return Home
+                        </a>
+                        <button class="btn btn-outline-secondary btn-lg" onclick="location.reload()">
+                            <i class="fas fa-redo"></i> Try Again
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

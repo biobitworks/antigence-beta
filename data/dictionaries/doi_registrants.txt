@@ -1,0 +1,42 @@
+10.1038	Nature Publishing Group
+10.1016	Elsevier
+10.1126	AAAS (Science)
+10.1371	PLOS
+10.1093	Oxford University Press
+10.1073	PNAS
+10.1186	BioMed Central
+10.1007	Springer
+10.1002	Wiley
+10.7554	eLife
+10.1172	JCI
+10.1101	Cold Spring Harbor (bioRxiv/medRxiv)
+10.15252	EMBO Press
+10.1021	American Chemical Society
+10.1128	American Society for Microbiology
+10.1161	American Heart Association
+10.1042	Portland Press
+10.1096	FASEB
+10.4049	American Association of Immunologists
+10.1074	ASBMB
+10.1083	Rockefeller University Press
+10.1124	ASPET
+10.1152	American Physiological Society
+10.1158	AACR
+10.1177	SAGE
+10.1080	Taylor & Francis
+10.3389	Frontiers Media
+10.1111	Wiley-Blackwell
+10.1146	Annual Reviews
+10.1098	Royal Society
+10.1242	Company of Biologists
+10.1091	Wiley (MCP)
+10.1089	Mary Ann Liebert
+10.2337	American Diabetes Association
+10.1182	American Society of Hematology
+10.1084	Rockefeller University Press
+10.1210	Endocrine Society
+10.1261	RNA Society
+10.1523	Society for Neuroscience
+10.1096	FASEB Journal
+10.1369	Histochemical Society
+10.1534	Genetics Society of America

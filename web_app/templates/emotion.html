@@ -1,0 +1,366 @@
+{% extends "base.html" %}
+
+{% block title %}Emotion Detection - IMMUNOS-MCP{% endblock %}
+
+{% block breadcrumb %}
+<nav aria-label="breadcrumb" class="container mt-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active">Emotion Detection</li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1><i class="fas fa-smile text-primary"></i> Emotion Detection</h1>
+            <p class="lead">Analyze text for emotional content using immune-inspired pattern recognition</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Input Panel -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-header bg-primary text-white p-0">
+                    <ul class="nav nav-tabs border-bottom-0" id="inputTabs" role="tablist">
+                        <li class="nav-item">
+                            <button class="nav-link active text-white" id="text-tab" data-bs-toggle="tab"
+                                data-bs-target="#textInputArea" type="button">
+                                <i class="fas fa-keyboard"></i> Text Analysis
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link text-white" id="visual-tab" data-bs-toggle="tab"
+                                data-bs-target="#visualInputArea" type="button">
+                                <i class="fas fa-camera"></i> Visual Analysis
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content" id="inputTabsContent">
+                        <!-- Text Input -->
+                        <div class="tab-pane fade show active" id="textInputArea" role="tabpanel">
+                            <div class="mb-3">
+                                <label for="textInput" class="form-label">Enter text to analyze:</label>
+                                <textarea class="form-control" id="textInput" rows="6"
+                                    placeholder="I am so happy today! Everything is going wonderfully."></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small text-muted">Quick Examples:</label>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <button class="btn btn-outline-warning btn-sm"
+                                        onclick="setExample('joy')">Joy</button>
+                                    <button class="btn btn-outline-info btn-sm"
+                                        onclick="setExample('sadness')">Sadness</button>
+                                    <button class="btn btn-outline-danger btn-sm"
+                                        onclick="setExample('anger')">Anger</button>
+                                    <button class="btn btn-outline-secondary btn-sm"
+                                        onclick="setExample('fear')">Fear</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Visual Input (Image/Video) -->
+                        <div class="tab-pane fade" id="visualInputArea" role="tabpanel">
+                            <div class="mb-3">
+                                <label class="form-label">Upload Facial Signal (Image/Video):</label>
+                                <div id="dropZone"
+                                    class="upload-zone p-5 text-center border-2 border-dashed rounded-3 bg-light hover-bg-gray cursor-pointer">
+                                    <i class="fas fa-file-video fa-3x text-primary mb-3"></i>
+                                    <p class="mb-0">Drag & Drop image/video or click to browse</p>
+                                    <small class="text-muted">Supports JPG, PNG, MP4</small>
+                                    <input type="file" id="fileInput" class="d-none" accept="image/*,video/*">
+                                </div>
+                                <div id="filePreview" class="mt-3 text-center d-none">
+                                    <div class="badge bg-info p-2 mb-2" id="fileNameDisplay"></div>
+                                    <div class="mt-1"><small class="text-muted italic">Click upload zone to change
+                                            file</small></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary w-100 mt-3" id="analyzeBtn" onclick="analyzeEmotion()">
+                        <i class="fas fa-brain"></i> Analyze Signal
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Panel -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-dark text-white">
+                    <i class="fas fa-chart-pie"></i> Analysis Results
+                </div>
+                <div class="card-body">
+                    <div id="resultsPanel" class="text-center text-muted py-4">
+                        <i class="fas fa-heart fa-4x mb-3"></i>
+                        <p>Submit text to see emotion analysis</p>
+                    </div>
+                    <div id="chartPanel" style="display: none;">
+                        <div id="emotionChart"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Emotion Breakdown -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-theater-masks"></i> Emotion Probabilities
+                </div>
+                <div class="card-body" id="emotionBars">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <span><i class="fas fa-smile text-warning"></i> Joy</span>
+                                    <span id="joyValue">0%</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar bg-warning" id="joyBar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <span><i class="fas fa-sad-tear text-info"></i> Sadness</span>
+                                    <span id="sadnessValue">0%</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar bg-info" id="sadnessBar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <span><i class="fas fa-angry text-danger"></i> Anger</span>
+                                    <span id="angerValue">0%</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar bg-danger" id="angerBar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <span><i class="fas fa-grimace text-secondary"></i> Fear</span>
+                                    <span id="fearValue">0%</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar bg-secondary" id="fearBar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <span><i class="fas fa-surprise text-purple"></i> Surprise</span>
+                                    <span id="surpriseValue">0%</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar" id="surpriseBar"
+                                        style="width: 0%; background-color: #9b59b6"></div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <span><i class="fas fa-meh text-success"></i> Neutral</span>
+                                    <span id="neutralValue">0%</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar bg-success" id="neutralBar" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    const examples = {
+        joy: "I am so happy today! This is the best day of my life. Everything is wonderful!",
+        sadness: "I feel really down and depressed. Nothing seems to be going right lately.",
+        anger: "This is absolutely infuriating! I can't believe they would do something so stupid!",
+        fear: "I'm terrified about what might happen. The uncertainty is overwhelming.",
+        neutral: "The meeting is scheduled for 3pm tomorrow. Please bring the quarterly reports."
+    };
+
+    let currentFile = null;
+
+    // Initialize components
+    document.addEventListener('DOMContentLoaded', () => {
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+
+        dropZone.onclick = () => fileInput.click();
+
+        fileInput.onchange = (e) => handleFiles(e.target.files);
+
+        dropZone.ondragover = (e) => {
+            e.preventDefault();
+            dropZone.classList.add('bg-secondary', 'text-white');
+        };
+
+        dropZone.ondragleave = () => {
+            dropZone.classList.remove('bg-secondary', 'text-white');
+        };
+
+        dropZone.ondrop = (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('bg-secondary', 'text-white');
+            handleFiles(e.dataTransfer.files);
+        };
+    });
+
+    function handleFiles(files) {
+        if (files.length === 0) return;
+        currentFile = files[0];
+        document.getElementById('fileNameDisplay').textContent = `File: ${currentFile.name}`;
+        document.getElementById('filePreview').classList.remove('d-none');
+    }
+
+    function setExample(emotion) {
+        document.getElementById('textInput').value = examples[emotion];
+        // Switch to text tab if not active
+        const textTab = document.getElementById('text-tab');
+        if (!textTab.classList.contains('active')) {
+            bootstrap.Tab.getOrCreateInstance(textTab).show();
+        }
+    }
+
+    async function analyzeEmotion() {
+        const activeTab = document.querySelector('#inputTabs .nav-link.active').id;
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const resultsPanel = document.getElementById('resultsPanel');
+
+        let payload = {};
+        if (activeTab === 'text-tab') {
+            const text = document.getElementById('textInput').value;
+            if (!text.trim()) {
+                alert('Please enter some text to analyze');
+                return;
+            }
+            payload = { text, modality: 'text' };
+        } else {
+            if (!currentFile) {
+                alert('Please upload an image or video file');
+                return;
+            }
+            // In a real app we'd send the file, here we simulate based on filename/type
+            payload = {
+                filename: currentFile.name,
+                filetype: currentFile.type,
+                modality: 'visual'
+            };
+        }
+
+        // Update UI
+        analyzeBtn.disabled = true;
+        analyzeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+        resultsPanel.innerHTML = '<div class="text-center py-4"><i class="fas fa-spinner fa-spin fa-3x"></i><p class="mt-3">Analyzing signal with Antigent B-Cells...</p></div>';
+
+        try {
+            const response = await fetch('/api/detect_emotion', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+            displayResults(result);
+        } catch (error) {
+            resultsPanel.innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
+        } finally {
+            analyzeBtn.disabled = false;
+            analyzeBtn.innerHTML = '<i class="fas fa-brain"></i> Analyze Signal';
+        }
+    }
+
+    function displayResults(result) {
+        const resultsPanel = document.getElementById('resultsPanel');
+        const chartPanel = document.getElementById('chartPanel');
+
+        const emotionIcons = {
+            joy: 'smile',
+            sadness: 'sad-tear',
+            anger: 'angry',
+            fear: 'grimace',
+            surprise: 'surprise',
+            neutral: 'meh'
+        };
+        const icon = emotionIcons[result.dominant_emotion] || 'meh';
+
+        let modalityHtml = `<span class="badge bg-secondary mb-2">${result.modality.toUpperCase()} MODE</span>`;
+
+        let indicatorsHtml = '';
+        if (result.indicators) {
+            indicatorsHtml = '<div class="small mt-2 text-start p-2 bg-light rounded border">';
+            result.indicators.forEach(ind => {
+                indicatorsHtml += `<div><i class="fas fa-check-circle text-success me-1"></i> ${ind}</div>`;
+            });
+            indicatorsHtml += '</div>';
+        }
+
+        resultsPanel.innerHTML = `
+        <div class="text-center">
+            ${modalityHtml}
+            <div class="display-1 mb-2">
+                <i class="fas fa-${icon} text-primary"></i>
+            </div>
+            <h3 class="fw-bold">${result.dominant_emotion.toUpperCase()}</h3>
+            <div class="mb-3">
+                <span class="text-muted">Confidence: ${(result.confidence * 100).toFixed(1)}%</span>
+            </div>
+            ${indicatorsHtml}
+        </div>
+    `;
+
+        // Update probability bars
+        const probs = result.probabilities || {};
+        const emotions = ['joy', 'sadness', 'anger', 'fear', 'surprise', 'neutral'];
+        emotions.forEach(emo => {
+            updateBar(emo, probs[emo] || 0);
+        });
+
+        // Show pie chart
+        chartPanel.style.display = 'block';
+        const labels = Object.keys(probs);
+        const values = Object.values(probs);
+
+        Plotly.newPlot('emotionChart', [{
+            values: values,
+            labels: labels,
+            type: 'pie',
+            marker: {
+                colors: ['#f1c40f', '#3498db', '#e74c3c', '#95a5a6', '#9b59b6', '#2ecc71']
+            }
+        }], {
+            margin: { t: 10, b: 10, l: 10, r: 10 },
+            height: 180,
+            showlegend: false
+        });
+    }
+
+    function updateBar(emotion, value) {
+        const pct = (value * 100).toFixed(1);
+        const valEl = document.getElementById(emotion + 'Value');
+        const barEl = document.getElementById(emotion + 'Bar');
+        if (valEl && barEl) {
+            valEl.textContent = pct + '%';
+            barEl.style.width = pct + '%';
+        }
+    }
+</script>
+{% endblock %}

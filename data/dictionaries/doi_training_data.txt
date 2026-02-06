@@ -1,0 +1,41 @@
+# Verified DOI prefixes and patterns from CrossRef registrants
+# Format: prefix|publisher|sample_suffixes
+
+# Major scientific publishers
+10.1038|Nature Publishing Group|nature12345,s41586-023-06747-5,s41591-023-02345-6,nm.4346,ng.3656,nbt.3122,nmeth.4285
+10.1016|Elsevier|j.cell.2023.01.001,j.neuron.2023.02.001,j.molcel.2023.03.015,S0140-6736(23)00123-4,j.immuni.2022.11.003
+10.1126|AAAS Science|science.adf6276,science.add5235,sciimmunol.abq0651,scitranslmed.abc1234,sciadv.ade5678
+10.1371|PLOS|journal.pone.0123456,journal.pbio.3001234,journal.pmed.1004567,journal.pgen.1010234,journal.ppat.1011345
+10.1093|Oxford University Press|nar/gkad123,bioinformatics/btad456,bib/bbad234,aje/kwad123,cid/ciad456
+10.1073|PNAS|pnas.2212345678,pnas.2298765432,pnas.2187654321
+10.1172|JCI|JCI167890,JCI156789,JCI145678,jci.insight.123456
+10.1084|Rockefeller (JEM)|jem.20221234,jem.20230567
+10.1083|Rockefeller (JCB)|jcb.202201234,jcb.202305678
+10.7554|eLife|eLife.12345,eLife.67890,eLife.98765,eLife.45678
+10.15252|EMBO|embj.2023114567,embr.202356789,msb.202211234
+10.1186|BMC/Springer Nature|s12859-023-05123-4,s13059-023-02891-5,s12864-023-09234-7,s12967-023-04123-8
+10.1007|Springer|s00018-023-04789-0,s10654-023-00987-6,s00401-023-02567-8
+10.1002|Wiley|advs.202300123,anie.202312345,hep.32456,ana.26789,ijc.34567
+10.1021|ACS|jacs.3c01234,acs.chemrev.3c00456,acschembio.3c00789,acs.nanolett.3c01234
+10.1128|ASM|mbio.01234-23,jvi.00567-23,jb.00890-23,aac.01234-23
+10.1161|AHA|CIRCULATIONAHA.123.456789,STROKEAHA.123.456789
+10.1182|ASH Blood|blood.2023012345,bloodadvances.2023012345
+10.1158|AACR|cancerres.1234.2023,cancerdiscovery.2023-0123
+10.1101|Cold Spring Harbor|2023.01.15.524078,2023.06.20.545678,2024.01.10.123456
+10.1136|BMJ|bmj-2023-012345,gutjnl-2023-012345
+10.1056|NEJM|NEJMoa2301234,NEJMc2301234
+10.1001|JAMA|jama.2023.12345,jamanetworkopen.2023.12345
+10.3389|Frontiers|fimmu.2023.123456,fnins.2023.123456,fcell.2023.123456
+10.1111|Wiley-Blackwell|nph.18765,mec.16789,jcmm.17654
+10.1146|Annual Reviews|annurev-biochem-123456,annurev-immunol-123456
+10.1098|Royal Society|rspb.2023.0123,rstb.2023.0123
+10.1242|Company of Biologists|dev.201234,jcs.260123,bio.059123
+10.4049|AAI J Immunol|jimmunol.2200123,jimmunol.2200456
+10.1074|ASBMB JBC|jbc.RA123.456789,jbc.AC123.456789
+10.1124|ASPET|jpet.123.001234,molpharm.123.001234
+10.1152|APS|ajpcell.00123.2023,ajpheart.00456.2023
+10.1096|FASEB|fj.202301234,fasebj.2023.37.1_supplement
+10.1091|Wiley MCP|mcp.RA123.001234
+10.1089|Mary Ann Liebert|hum.2023.0123,ars.2023.0456
+10.2337|ADA Diabetes|diabetes.db230123,dc23-0123
+10.1038|Nature subdomain|s41467-023-12345-7,s41592-022-01234-5,s41588-023-01234-5

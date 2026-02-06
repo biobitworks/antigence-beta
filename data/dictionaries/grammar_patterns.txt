@@ -1,0 +1,36 @@
+# Correct patterns for scientific writing
+A novel approach to
+The role of X in Y
+We demonstrate that
+Our results indicate
+These findings suggest
+In this study, we
+Analysis revealed that
+Experiments showed that
+Data suggest that
+Results demonstrate
+We hypothesize that
+This study investigates
+Previous studies have shown
+It has been reported that
+Evidence suggests that
+We found that
+The present study
+To investigate whether
+In conclusion,
+Taken together,
+
+# Common grammar errors to detect
+Data shows (should be: Data show)
+This data (should be: These data)
+Less participants (should be: Fewer participants)
+Between the three groups (should be: Among the three groups)
+Very unique (redundant)
+Quite excellent (redundant)
+Firstly (should be: First)
+Secondly (should be: Second)
+In regards to (should be: With regard to)
+Different than (should be: Different from)
+Due to the fact that (wordy: should be: Because)
+In order to (wordy: should be: To)
+At this point in time (wordy: should be: Now)

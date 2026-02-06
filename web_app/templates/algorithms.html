@@ -1,0 +1,429 @@
+{% extends "base.html" %}
+
+{% block title %}Algorithms - IMMUNOS-MCP{% endblock %}
+
+{% block breadcrumb %}
+<nav aria-label="breadcrumb" class="container mt-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active">Algorithms</li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1><i class="fas fa-chart-line text-primary"></i> Algorithm Visualization</h1>
+            <p class="lead">Explore the immune-inspired algorithms powering IMMUNOS-MCP</p>
+        </div>
+    </div>
+
+    <!-- Algorithm Selector -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="btn-group w-100" role="group">
+                <input type="radio" class="btn-check" name="algorithm" id="algClonal" value="clonal" checked>
+                <label class="btn btn-outline-primary" for="algClonal">Clonal Selection</label>
+
+                <input type="radio" class="btn-check" name="algorithm" id="algNegative" value="negative">
+                <label class="btn btn-outline-danger" for="algNegative">Negative Selection</label>
+
+                <input type="radio" class="btn-check" name="algorithm" id="algQML" value="qml">
+                <label class="btn btn-outline-success" for="algQML">QML-AiNet</label>
+
+                <input type="radio" class="btn-check" name="algorithm" id="algOpt" value="opt">
+                <label class="btn btn-outline-warning" for="algOpt">Opt-AiNet</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Clonal Selection -->
+    <div class="algorithm-panel" id="panelClonal">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <i class="fas fa-dna"></i> Clonal Selection Algorithm
+                    </div>
+                    <div class="card-body">
+                        <p>Inspired by B-lymphocyte proliferation in the immune system.</p>
+                        <h6>Key Steps:</h6>
+                        <ol>
+                            <li><strong>Selection:</strong> Choose highest affinity antibodies</li>
+                            <li><strong>Cloning:</strong> Proliferate selected antibodies proportionally</li>
+                            <li><strong>Mutation:</strong> Hypermutation inversely proportional to affinity</li>
+                            <li><strong>Selection:</strong> Keep best mutants, replace worst</li>
+                        </ol>
+                        <h6>Parameters:</h6>
+                        <div class="row">
+                            <div class="col-6">
+                                <label class="form-label">Population Size:</label>
+                                <input type="range" class="form-range" id="clonalPop" min="10" max="100" value="50">
+                                <span id="clonalPopValue">50</span>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">Clone Factor:</label>
+                                <input type="range" class="form-range" id="clonalFactor" min="1" max="10" value="5">
+                                <span id="clonalFactorValue">5</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary mt-3" onclick="runClonalDemo()">
+                            <i class="fas fa-play"></i> Run Simulation
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div id="clonalChart"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Negative Selection -->
+    <div class="algorithm-panel" id="panelNegative" style="display: none;">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-danger text-white">
+                        <i class="fas fa-filter"></i> Negative Selection Algorithm
+                    </div>
+                    <div class="card-body">
+                        <p>Inspired by T-cell maturation in the thymus - learns self/non-self discrimination.</p>
+                        <h6>Key Concepts:</h6>
+                        <ul>
+                            <li><strong>Self Set:</strong> Normal behavior patterns</li>
+                            <li><strong>Detectors:</strong> Generated randomly, trained to avoid self</li>
+                            <li><strong>Matching:</strong> r-contiguous bits or Hamming distance</li>
+                        </ul>
+                        <h6>Parameters:</h6>
+                        <div class="row">
+                            <div class="col-6">
+                                <label class="form-label">Detector Count:</label>
+                                <input type="range" class="form-range" id="negDetectors" min="10" max="200" value="100">
+                                <span id="negDetectorsValue">100</span>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">Match Threshold (r):</label>
+                                <input type="range" class="form-range" id="negThreshold" min="3" max="12" value="7">
+                                <span id="negThresholdValue">7</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-danger mt-3" onclick="runNegativeDemo()">
+                            <i class="fas fa-play"></i> Run Simulation
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div id="negativeChart"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QML-AiNet -->
+    <div class="algorithm-panel" id="panelQML" style="display: none;">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <i class="fas fa-brain"></i> QML-AiNet Algorithm
+                    </div>
+                    <div class="card-body">
+                        <p>Qualitative Model Learning using Artificial Immune Networks (Pang & Coghill, 2015).</p>
+                        <h6>Key Features:</h6>
+                        <ul>
+                            <li><strong>Qualitative States:</strong> (+, 0, -) instead of continuous values</li>
+                            <li><strong>Constraint Learning:</strong> Discovers relationships between variables</li>
+                            <li><strong>Network Suppression:</strong> Eliminates redundant solutions</li>
+                        </ul>
+                        <h6>Search Space:</h6>
+                        <div class="mb-3">
+                            <label class="form-label">Variables:</label>
+                            <input type="range" class="form-range" id="qmlVars" min="2" max="6" value="3">
+                            <span id="qmlVarsValue">3</span>
+                            <small class="text-muted d-block">Search space: <span id="qmlSearchSpace">27</span>
+                                combinations</small>
+                        </div>
+                        <button class="btn btn-success mt-3" onclick="runQMLDemo()">
+                            <i class="fas fa-play"></i> Run Learning
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div id="qmlChart"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Opt-AiNet -->
+    <div class="algorithm-panel" id="panelOpt" style="display: none;">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-warning text-dark">
+                        <i class="fas fa-mountain"></i> Opt-AiNet Algorithm
+                    </div>
+                    <div class="card-body">
+                        <p>Optimization using Artificial Immune Networks (de Castro & Timmis, 2002).</p>
+                        <h6>Key Features:</h6>
+                        <ul>
+                            <li><strong>Multi-modal:</strong> Finds multiple optima simultaneously</li>
+                            <li><strong>Network Suppression:</strong> Maintains diversity</li>
+                            <li><strong>Adaptive Population:</strong> Grows/shrinks based on search progress</li>
+                        </ul>
+                        <h6>Test Function:</h6>
+                        <select class="form-select mb-3" id="optFunction">
+                            <option value="rastrigin">Rastrigin (highly multi-modal)</option>
+                            <option value="sphere">Sphere (unimodal)</option>
+                            <option value="rosenbrock">Rosenbrock (banana valley)</option>
+                        </select>
+                        <button class="btn btn-warning mt-3" onclick="runOptDemo()">
+                            <i class="fas fa-play"></i> Run Optimization
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div id="optChart"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Algorithm Comparison -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-table"></i> Algorithm Comparison
+                </div>
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Algorithm</th>
+                                <th>Biological Inspiration</th>
+                                <th>Primary Use</th>
+                                <th>Antigent</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="badge bg-primary">Clonal Selection</span></td>
+                                <td>B-cell proliferation</td>
+                                <td>Pattern recognition, classification</td>
+                                <td>B-Cell Antigent</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge bg-danger">Negative Selection</span></td>
+                                <td>T-cell maturation</td>
+                                <td>Anomaly detection</td>
+                                <td>NK-Cell Antigent</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge bg-success">QML-AiNet</span></td>
+                                <td>Immune network theory</td>
+                                <td>Qualitative model learning</td>
+                                <td>QML Antigent</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge bg-warning">Opt-AiNet</span></td>
+                                <td>Immune network suppression</td>
+                                <td>Multi-modal optimization</td>
+                                <td>Optimization Antigent</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- References -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-book"></i> References
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li><i class="fas fa-file-alt"></i> de Castro & Von Zuben (2002) - "Learning and optimization
+                            using the clonal selection principle"</li>
+                        <li><i class="fas fa-file-alt"></i> de Castro & Timmis (2002) - "An artificial immune network
+                            for multimodal function optimization"</li>
+                        <li><i class="fas fa-file-alt"></i> Pang & Coghill (2015) - "QML-AiNet: an immune network
+                            approach to learning qualitative differential equation models"</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Algorithm panel switching
+    document.querySelectorAll('input[name="algorithm"]').forEach(radio => {
+        radio.addEventListener('change', function () {
+            document.querySelectorAll('.algorithm-panel').forEach(p => p.style.display = 'none');
+            document.getElementById('panel' + this.value.charAt(0).toUpperCase() + this.value.slice(1)).style.display = 'block';
+        });
+    });
+
+    // Parameter value displays
+    ['clonalPop', 'clonalFactor', 'negDetectors', 'negThreshold', 'qmlVars'].forEach(id => {
+        const slider = document.getElementById(id);
+        if (slider) {
+            slider.addEventListener('input', function () {
+                document.getElementById(id + 'Value').textContent = this.value;
+                if (id === 'qmlVars') {
+                    document.getElementById('qmlSearchSpace').textContent = Math.pow(3, this.value);
+                }
+            });
+        }
+    });
+
+    // Demo simulations
+    function runClonalDemo() {
+        const generations = 20;
+        const x = Array.from({ length: generations }, (_, i) => i);
+        const fitness = x.map(i => 1 - Math.exp(-i * 0.2) + Math.random() * 0.05);
+
+        Plotly.newPlot('clonalChart', [{
+            x: x,
+            y: fitness,
+            type: 'scatter',
+            mode: 'lines+markers',
+            name: 'Best Fitness',
+            line: { color: '#0d6efd' }
+        }], {
+            title: 'Clonal Selection Convergence',
+            xaxis: { title: 'Generation' },
+            yaxis: { title: 'Fitness', range: [0, 1.1] },
+            margin: { t: 40, b: 40, l: 50, r: 20 }
+        });
+    }
+
+    function runNegativeDemo() {
+        const data = [];
+        for (let i = 0; i < 100; i++) {
+            data.push({
+                x: Math.random() * 10,
+                y: Math.random() * 10,
+                type: Math.random() > 0.3 ? 'self' : 'detector'
+            });
+        }
+
+        Plotly.newPlot('negativeChart', [
+            {
+                x: data.filter(d => d.type === 'self').map(d => d.x),
+                y: data.filter(d => d.type === 'self').map(d => d.y),
+                mode: 'markers',
+                type: 'scatter',
+                name: 'Self',
+                marker: { color: '#198754', size: 10 }
+            },
+            {
+                x: data.filter(d => d.type === 'detector').map(d => d.x),
+                y: data.filter(d => d.type === 'detector').map(d => d.y),
+                mode: 'markers',
+                type: 'scatter',
+                name: 'Detectors',
+                marker: { color: '#dc3545', size: 8, symbol: 'x' }
+            }
+        ], {
+            title: 'Self/Non-Self Space',
+            xaxis: { title: 'Feature 1' },
+            yaxis: { title: 'Feature 2' },
+            margin: { t: 40, b: 40, l: 50, r: 20 }
+        });
+    }
+
+    function runQMLDemo() {
+        const iterations = 15;
+        const x = Array.from({ length: iterations }, (_, i) => i);
+        const fitness = x.map(i => Math.min(1, 0.3 + i * 0.05 + Math.random() * 0.1));
+
+        Plotly.newPlot('qmlChart', [{
+            x: x,
+            y: fitness,
+            type: 'scatter',
+            mode: 'lines+markers',
+            name: 'Model Fitness',
+            line: { color: '#198754' }
+        }], {
+            title: 'QML-AiNet Learning Progress',
+            xaxis: { title: 'Iteration' },
+            yaxis: { title: 'Model Fitness', range: [0, 1.1] },
+            margin: { t: 40, b: 40, l: 50, r: 20 }
+        });
+    }
+
+    function runOptDemo() {
+        // Generate multi-modal optimization landscape
+        const points = [];
+        for (let i = 0; i < 50; i++) {
+            points.push({
+                x: Math.random() * 10 - 5,
+                y: Math.random() * 10 - 5
+            });
+        }
+
+        // Simulate convergence to multiple optima
+        const optima = [
+            { x: -2, y: -2 },
+            { x: 2, y: 2 },
+            { x: -2, y: 2 },
+            { x: 2, y: -2 }
+        ];
+
+        Plotly.newPlot('optChart', [
+            {
+                x: points.map(p => p.x),
+                y: points.map(p => p.y),
+                mode: 'markers',
+                type: 'scatter',
+                name: 'Population',
+                marker: { color: '#ffc107', size: 8 }
+            },
+            {
+                x: optima.map(o => o.x),
+                y: optima.map(o => o.y),
+                mode: 'markers',
+                type: 'scatter',
+                name: 'Optima',
+                marker: { color: '#dc3545', size: 15, symbol: 'star' }
+            }
+        ], {
+            title: 'Multi-Modal Optimization',
+            xaxis: { title: 'X', range: [-6, 6] },
+            yaxis: { title: 'Y', range: [-6, 6] },
+            margin: { t: 40, b: 40, l: 50, r: 20 }
+        });
+    }
+
+    // Initialize first chart
+    runClonalDemo();
+</script>
+{% endblock %}

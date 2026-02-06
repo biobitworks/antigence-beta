@@ -1,0 +1,169 @@
+adenine
+adenosine
+alanine
+albumin
+allele
+amino acid
+antibody
+antigen
+apoptosis
+arginine
+asparagine
+aspartate
+ATP
+bacterium
+base pair
+binding site
+biomarker
+carbohydrate
+catalysis
+cell
+centromere
+chloroplast
+chromatid
+chromatin
+chromosome
+cistron
+clone
+codon
+collagen
+cytokine
+cytoplasm
+cytosine
+denaturation
+deoxyribonucleic acid
+diploid
+DNA
+domain
+downstream
+electrophoresis
+endoplasmic reticulum
+enzyme
+epigenetic
+eukaryote
+exon
+expression
+fermentation
+flagellum
+folding
+frameshift
+gene
+genetic code
+genome
+genotype
+glucose
+glutamate
+glutamine
+glycine
+glycoprotein
+golgi apparatus
+guanine
+haploid
+helicase
+hemoglobin
+heterozygous
+histidine
+histone
+homolog
+homozygous
+hormone
+hybridization
+hydrogen bond
+hydrolysis
+hydrophilic
+hydrophobic
+immunoglobulin
+insulin
+intron
+isoleucine
+karyotype
+keratin
+kinase
+leucine
+ligand
+ligase
+lipid
+locus
+lysine
+lysosome
+meiosis
+membrane
+messenger RNA
+metabolism
+methionine
+microRNA
+mitochondria
+mitosis
+molecular weight
+monomer
+morphology
+motif
+mRNA
+mutant
+mutation
+myosin
+nucleic acid
+nucleotide
+nucleus
+oncogene
+operon
+organelle
+oxidation
+peptide
+phage
+phenotype
+phenylalanine
+phosphate
+phospholipid
+phosphorylation
+photosynthesis
+plasmid
+polymer
+polymerase
+polypeptide
+prion
+prokaryote
+proline
+promoter
+protease
+protein
+proteome
+purine
+pyrimidine
+recombination
+reduction
+replication
+repressor
+restriction enzyme
+reverse transcription
+ribosome
+ribonucleic acid
+RNA
+serine
+signal transduction
+splicing
+stem cell
+substrate
+sucrose
+synapse
+telomere
+threonine
+thymine
+transcription
+transfer RNA
+translation
+transmembrane
+transposon
+tRNA
+tryptophan
+tubulin
+tyrosine
+ubiquitin
+upstream
+uracil
+valine
+vector
+virion
+virus
+wild type
+zygote

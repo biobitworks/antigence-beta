@@ -1,0 +1,85 @@
+{
+  "version": "1.0.0",
+  "updated": "2026-01-12",
+
+  "embedding_models": {
+    "default": "nomic-embed-text",
+    "code": "nomic-embed-text",
+    "available": {
+      "nomic-embed-text": {
+        "backend": "ollama",
+        "dimensions": 768,
+        "max_tokens": 8192,
+        "description": "General text embeddings"
+      },
+      "mxbai-embed-large": {
+        "backend": "ollama",
+        "dimensions": 1024,
+        "max_tokens": 512,
+        "description": "High-quality text embeddings"
+      },
+      "bge-m3": {
+        "backend": "ollama",
+        "dimensions": 1024,
+        "max_tokens": 8192,
+        "description": "Multilingual embeddings"
+      }
+    }
+  },
+
+  "classification_models": {
+    "code_security": {
+      "default": "codebert-insecure",
+      "available": {
+        "codebert-insecure": {
+          "path": "~/.antigence/models/mrm8488_codebert-base-finetuned-detect-insecure-code",
+          "type": "binary",
+          "labels": ["safe", "vulnerable"],
+          "description": "CodeBERT fine-tuned for insecure code detection"
+        },
+        "codebert-devign": {
+          "path": "~/.antigence/models/mahdin70_codebert-devign-code-vulnerability-detector",
+          "type": "binary",
+          "labels": ["safe", "vulnerable"],
+          "description": "CodeBERT fine-tuned on Devign dataset"
+        },
+        "graphcodebert-cwe": {
+          "path": "~/.antigence/models/mahdin70_GraphCodeBERT-VulnCWE",
+          "type": "multiclass",
+          "labels": "cwe_ids",
+          "trust_remote_code": true,
+          "description": "GraphCodeBERT for CWE classification"
+        }
+      }
+    }
+  },
+
+  "base_models": {
+    "codebert-base": {
+      "path": "~/.antigence/models/microsoft_codebert-base",
+      "description": "Base CodeBERT for fine-tuning"
+    },
+    "graphcodebert-base": {
+      "path": "~/.antigence/models/microsoft_graphcodebert-base",
+      "description": "Base GraphCodeBERT for fine-tuning"
+    }
+  },
+
+  "chat_models": {
+    "ollama": {
+      "nk_cell": "qwen2.5:1.5b",
+      "bcell": "qwen2.5-coder:7b",
+      "dendritic": "deepseek-r1:14b",
+      "tcell": "qwen2.5:7b",
+      "orchestrator": "qwen2.5-coder:7b"
+    }
+  },
+
+  "datasets": {
+    "code_security": {
+      "synthetic": "data/training/security/synthetic_security.csv",
+      "vulnerable_patterns": "examples/code_security_scanner/datasets/vulnerable_patterns.py",
+      "safe_patterns": "examples/code_security_scanner/datasets/safe_patterns.py"
+    }
+  }
+}

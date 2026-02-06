@@ -1,0 +1,101 @@
+content,label
+DROP TABLE users; --,malicious
+UPDATE settings SET dark_mode = 1 WHERE user_id = 42,normal
+INSERT INTO logs (msg) VALUES ('Login successful'),normal
+UPDATE settings SET dark_mode = 1 WHERE user_id = 42,normal
+<script>alert('XSS')</script>,malicious
+INSERT INTO logs (msg) VALUES ('Login successful'),normal
+SELECT * FROM users WHERE id = 1 OR 1=1,malicious
+SELECT * FROM users WHERE id = 1,normal
+<script>alert('XSS')</script>,malicious
+"' UNION SELECT username, password FROM users --",malicious
+UPDATE settings SET dark_mode = 1 WHERE user_id = 42,normal
+INSERT INTO logs (msg) VALUES ('Login successful'),normal
+INSERT INTO logs (msg) VALUES ('Login successful'),normal
+UPDATE settings SET dark_mode = 1 WHERE user_id = 42,normal
+<script>alert('XSS')</script>,malicious
+INSERT INTO logs (msg) VALUES ('Login successful'),normal
+UPDATE settings SET dark_mode = 1 WHERE user_id = 42,normal
+"SELECT name, email FROM profiles WHERE active = 1",normal
+UPDATE settings SET dark_mode = 1 WHERE user_id = 42,normal
+<script>alert('XSS')</script>,malicious
+"SELECT name, email FROM profiles WHERE active = 1",normal
+SELECT * FROM users WHERE id = 1 OR 1=1,malicious
+"SELECT name, email FROM profiles WHERE active = 1",normal
+INSERT INTO logs (msg) VALUES ('Login successful'),normal
+SELECT * FROM users WHERE id = 1,normal
+SELECT * FROM users WHERE id = 1,normal
+"' UNION SELECT username, password FROM users --",malicious
+SELECT * FROM users WHERE id = 1,normal
+UPDATE settings SET dark_mode = 1 WHERE user_id = 42,normal
+DROP TABLE users; --,malicious
+UPDATE settings SET dark_mode = 1 WHERE user_id = 42,normal
+INSERT INTO logs (msg) VALUES ('Login successful'),normal
+"SELECT name, email FROM profiles WHERE active = 1",normal
+SELECT * FROM users WHERE id = 1,normal
+INSERT INTO logs (msg) VALUES ('Login successful'),normal
+DROP TABLE users; --,malicious
+<script>alert('XSS')</script>,malicious
+"' UNION SELECT username, password FROM users --",malicious
+SELECT * FROM users WHERE id = 1 OR 1=1,malicious
+DROP TABLE users; --,malicious
+"SELECT name, email FROM profiles WHERE active = 1",normal
+SELECT * FROM users WHERE id = 1 OR 1=1,malicious
+"SELECT name, email FROM profiles WHERE active = 1",normal
+UPDATE settings SET dark_mode = 1 WHERE user_id = 42,normal
+SELECT * FROM users WHERE id = 1,normal
+DROP TABLE users; --,malicious
+UPDATE settings SET dark_mode = 1 WHERE user_id = 42,normal
+SELECT * FROM users WHERE id = 1,normal
+"' UNION SELECT username, password FROM users --",malicious
+"SELECT name, email FROM profiles WHERE active = 1",normal
+<script>alert('XSS')</script>,malicious
+INSERT INTO logs (msg) VALUES ('Login successful'),normal
+SELECT * FROM users WHERE id = 1 OR 1=1,malicious
+DROP TABLE users; --,malicious
+INSERT INTO logs (msg) VALUES ('Login successful'),normal
+INSERT INTO logs (msg) VALUES ('Login successful'),normal
+"SELECT name, email FROM profiles WHERE active = 1",normal
+<script>alert('XSS')</script>,malicious
+SELECT * FROM users WHERE id = 1,normal
+UPDATE settings SET dark_mode = 1 WHERE user_id = 42,normal
+UPDATE settings SET dark_mode = 1 WHERE user_id = 42,normal
+SELECT * FROM users WHERE id = 1 OR 1=1,malicious
+SELECT * FROM users WHERE id = 1 OR 1=1,malicious
+INSERT INTO logs (msg) VALUES ('Login successful'),normal
+"SELECT name, email FROM profiles WHERE active = 1",normal
+SELECT * FROM users WHERE id = 1 OR 1=1,malicious
+INSERT INTO logs (msg) VALUES ('Login successful'),normal
+<script>alert('XSS')</script>,malicious
+UPDATE settings SET dark_mode = 1 WHERE user_id = 42,normal
+"' UNION SELECT username, password FROM users --",malicious
+UPDATE settings SET dark_mode = 1 WHERE user_id = 42,normal
+SELECT * FROM users WHERE id = 1,normal
+SELECT * FROM users WHERE id = 1,normal
+"SELECT name, email FROM profiles WHERE active = 1",normal
+SELECT * FROM users WHERE id = 1,normal
+SELECT * FROM users WHERE id = 1,normal
+SELECT * FROM users WHERE id = 1 OR 1=1,malicious
+"SELECT name, email FROM profiles WHERE active = 1",normal
+INSERT INTO logs (msg) VALUES ('Login successful'),normal
+"SELECT name, email FROM profiles WHERE active = 1",normal
+<script>alert('XSS')</script>,malicious
+SELECT * FROM users WHERE id = 1 OR 1=1,malicious
+"SELECT name, email FROM profiles WHERE active = 1",normal
+INSERT INTO logs (msg) VALUES ('Login successful'),normal
+"SELECT name, email FROM profiles WHERE active = 1",normal
+INSERT INTO logs (msg) VALUES ('Login successful'),normal
+SELECT * FROM users WHERE id = 1,normal
+"SELECT name, email FROM profiles WHERE active = 1",normal
+DROP TABLE users; --,malicious
+INSERT INTO logs (msg) VALUES ('Login successful'),normal
+<script>alert('XSS')</script>,malicious
+"SELECT name, email FROM profiles WHERE active = 1",normal
+SELECT * FROM users WHERE id = 1 OR 1=1,malicious
+SELECT * FROM users WHERE id = 1,normal
+INSERT INTO logs (msg) VALUES ('Login successful'),normal
+SELECT * FROM users WHERE id = 1,normal
+SELECT * FROM users WHERE id = 1,normal
+UPDATE settings SET dark_mode = 1 WHERE user_id = 42,normal
+DROP TABLE users; --,malicious
+INSERT INTO logs (msg) VALUES ('Login successful'),normal

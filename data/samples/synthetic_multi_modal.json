@@ -1,0 +1,27 @@
+{
+  "citation_samples": [
+    {
+      "title": "Quantum Hallucinations in Neural Architectures",
+      "authors": "J. Doe, A. Smith",
+      "journal": "Nature Physics",
+      "doi": "10.1038/s41567-024-fake-1",
+      "year": 2026,
+      "expected": "HALLUCINATED"
+    },
+    {
+      "title": "Negative selection-based artificial immune system (NegSl-AIS)",
+      "authors": "M. Umair, N. Rashid",
+      "journal": "Results in Engineering",
+      "doi": "10.1016/j.rineng.2025.106601",
+      "year": 2025,
+      "expected": "CLEAN"
+    }
+  ],
+  "bio_feature_samples": [
+    {
+      "dimension": "LA",
+      "features": [0.5, 0.5, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+      "label": "SELF"
+    }
+  ]
+}

@@ -1,0 +1,256 @@
+{% extends "base.html" %}
+
+{% block title %}Code Security Scanner - IMMUNOS-MCP{% endblock %}
+
+{% block breadcrumb %}
+<nav aria-label="breadcrumb" class="container mt-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active">Code Security Scanner</li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1><i class="fas fa-code text-danger"></i> Code Security Scanner</h1>
+            <p class="lead">Detect vulnerabilities using B Cell pattern matching and NK Cell anomaly detection</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Input Panel -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-danger text-white">
+                    <i class="fas fa-keyboard"></i> Code Input
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="codeInput" class="form-label">Paste your code snippet:</label>
+                        <textarea class="form-control font-monospace" id="codeInput" rows="12" placeholder="def execute_command(cmd):
+    os.system(cmd)  # Potential command injection"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="pipelineSelect" class="form-label">Analysis Pipeline:</label>
+                        <select class="form-select" id="pipelineSelect">
+                            <option value="quick">Quick Scan (B Cell only)</option>
+                            <option value="standard" selected>Standard (B Cell + NK Cell)</option>
+                            <option value="deep">Deep Analysis (All Antigents + LLM)</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-danger w-100" id="scanBtn" onclick="scanCode()">
+                        <i class="fas fa-search"></i> Scan Code
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Panel -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-dark text-white">
+                    <i class="fas fa-clipboard-list"></i> Analysis Results
+                </div>
+                <div class="card-body" id="resultsPanel">
+                    <div class="text-center text-muted py-5">
+                        <i class="fas fa-shield-alt fa-4x mb-3"></i>
+                        <p>Submit code to see analysis results</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CWE Reference Panel -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-book"></i> Detected Vulnerability Types
+                </div>
+                <div class="card-body">
+                    <div class="row" id="cwePanel">
+                        <div class="col-md-3 mb-2">
+                            <div class="alert alert-secondary mb-0">
+                                <strong>CWE-78</strong><br>
+                                <small>OS Command Injection</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <div class="alert alert-secondary mb-0">
+                                <strong>CWE-89</strong><br>
+                                <small>SQL Injection</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <div class="alert alert-secondary mb-0">
+                                <strong>CWE-79</strong><br>
+                                <small>Cross-site Scripting (XSS)</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <div class="alert alert-secondary mb-0">
+                                <strong>CWE-22</strong><br>
+                                <small>Path Traversal</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Agent Activity Panel -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-users"></i> Antigent Activity
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-4">
+                            <div class="agent-status" id="bcellStatus">
+                                <i class="fas fa-user-shield fa-2x text-muted mb-2"></i>
+                                <h6>B-Cell Antigent</h6>
+                                <span class="badge bg-secondary">Idle</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="agent-status" id="nkcellStatus">
+                                <i class="fas fa-exclamation-triangle fa-2x text-muted mb-2"></i>
+                                <h6>NK-Cell Antigent</h6>
+                                <span class="badge bg-secondary">Idle</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="agent-status" id="llmStatus">
+                                <i class="fas fa-brain fa-2x text-muted mb-2"></i>
+                                <h6>LLM Enhancement</h6>
+                                <span class="badge bg-secondary">Idle</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .bg-orange {
+        background-color: #fd7e14;
+    }
+</style>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    async function scanCode() {
+        const code = document.getElementById('codeInput').value;
+        const pipeline = document.getElementById('pipelineSelect').value;
+        const resultsPanel = document.getElementById('resultsPanel');
+        const scanBtn = document.getElementById('scanBtn');
+
+        if (!code.trim()) {
+            alert('Please enter some code to scan');
+            return;
+        }
+
+        // Update UI to show scanning
+        scanBtn.disabled = true;
+        scanBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Scanning...';
+        resultsPanel.innerHTML = '<div class="text-center py-5"><i class="fas fa-spinner fa-spin fa-3x"></i><p class="mt-3">Analyzing code...</p></div>';
+
+        // Update agent status
+        updateAgentStatus('bcell', 'active');
+        if (pipeline !== 'quick') updateAgentStatus('nkcell', 'active');
+        if (pipeline === 'deep') updateAgentStatus('llm', 'active');
+
+        try {
+            const response = await fetch('/api/scan', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code, pipeline })
+            });
+
+            const result = await response.json();
+            displayResults(result);
+        } catch (error) {
+            resultsPanel.innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
+        } finally {
+            scanBtn.disabled = false;
+            scanBtn.innerHTML = '<i class="fas fa-search"></i> Scan Code';
+            updateAgentStatus('bcell', 'idle');
+            updateAgentStatus('nkcell', 'idle');
+            updateAgentStatus('llm', 'idle');
+        }
+    }
+
+    function displayResults(result) {
+        const panel = document.getElementById('resultsPanel');
+        const isVulnerable = result.predicted_class === 'vulnerable';
+        const alertClass = isVulnerable ? 'danger' : 'success';
+        const icon = isVulnerable ? 'exclamation-triangle' : 'check-circle';
+
+        let cweHtml = '';
+        if (result.cwe_types && result.cwe_types.length > 0) {
+            cweHtml = `<div class="mb-2"><strong>Findings:</strong> <span class="badge bg-dark">${result.cwe_types.join('</span> <span class="badge bg-dark">')}</span></div>`;
+        }
+
+        let severityClass = 'bg-secondary';
+        if (result.severity === 'Critical') severityClass = 'bg-danger';
+        else if (result.severity === 'High') severityClass = 'bg-orange text-dark';
+        else if (result.severity === 'Medium') severityClass = 'bg-warning text-dark';
+        else if (result.severity === 'Low') severityClass = 'bg-info text-dark';
+
+        panel.innerHTML = `
+        <div class="alert alert-${alertClass} shadow-sm">
+            <h4 class="mb-0"><i class="fas fa-${icon}"></i> ${result.predicted_class.toUpperCase()}</h4>
+        </div>
+
+        <div class="result-details mt-3">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span><strong>Severity:</strong> <span class="badge ${severityClass}">${result.severity}</span></span>
+                <span class="text-muted"><small>Confidence: ${(result.confidence * 100).toFixed(1)}%</small></span>
+            </div>
+
+            ${cweHtml}
+
+            <div class="p-3 bg-light rounded mb-3">
+                <strong><i class="fas fa-tools"></i> Recommended Mitigation:</strong>
+                <p class="mb-0 mt-1 small">${result.mitigation}</p>
+            </div>
+
+            <div class="small text-muted mb-3">
+                <i class="fas fa-microscope"></i> <strong>Agents:</strong> ${result.agents_used.join(', ')}
+                <span class="ms-2"><i class="fas fa-clock"></i> ${result.execution_time.toFixed(3)}s</span>
+            </div>
+
+            <div class="alert alert-light border small text-muted py-2">
+                <i class="fas fa-info-circle"></i> ${result.disclaimer}
+            </div>
+        </div>
+    `;
+    }
+
+    function updateAgentStatus(agent, status) {
+        const el = document.getElementById(agent + 'Status');
+        const badge = el.querySelector('.badge');
+        const icon = el.querySelector('i');
+
+        if (status === 'active') {
+            badge.className = 'badge bg-success';
+            badge.textContent = 'Active';
+            icon.className = icon.className.replace('text-muted', 'text-success');
+        } else {
+            badge.className = 'badge bg-secondary';
+            badge.textContent = 'Idle';
+            icon.className = icon.className.replace('text-success', 'text-muted');
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,44 @@
+id: research-v1
+name: Research Verification Pack
+domain: research
+version: 1.0.0
+features:
+  - name: dendritic_claim_features
+    inputs: [claim_text, evidence_sentences, citations]
+receptors:
+  nk:
+    detector_set: nk_research_v1.json
+    mode: feature
+  bcell:
+    classifier: bcell_research_v1.pt
+    labels: [support, contradict, nei]
+  tcell:
+    memory_store: tcell_research_v1
+thresholds:
+  nk: 0.95
+  bcell: 0.80
+hardware_tiers:
+  tier0_airgapped:
+    models: [qwen2.5:1.5b]
+    max_memory_gb: 8
+  tier1_laptop:
+    models: [qwen2.5:7b]
+    max_memory_gb: 32
+  tier2_workstation:
+    models: [deepseek-r1:14b]
+    max_memory_gb: 128
+  tier3_cloud:
+    models: [claude-opus-4.5]
+    max_memory_gb: 512
+data_sources:
+  train: [SciFact]
+  eval: [SciFact-dev]
+metrics:
+  - sentence_selection_f1
+  - abstract_label_f1
+policies:
+  - require_evidence_links
+  - block_if_no_sources
+notes: "High-precision mode available via oracle-TFIDF upper bound."
+owner: "immunOS"
+dependencies: ["scifact-py38-legacy"]

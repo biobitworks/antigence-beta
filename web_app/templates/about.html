@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}About Antigence™ - Technical Deep-Dive{% endblock %}
+
+{% block content %}
+<div class="row mb-5">
+    <div class="col-md-10 offset-md-1">
+        <h1 class="display-4 fw-bold mb-4">Technical Foundation</h1>
+        <p class="lead text-muted">A project-specific framework for Scientific AI Integrity.</p>
+        <hr class="mb-5">
+
+        <!-- Unified Interface -->
+        <div class="card shadow-sm mb-5 border-0">
+            <div class="card-body p-5">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h2 class="fw-bold mb-3"><i class="fas fa-brain text-primary"></i> Unified Interface Architecture</h2>
+                        <p>In the **immunOS** ecosystem, we treat Digital Signals (AI text/code) and Biological Signals (EEG/ECG) through the same mathematical lens.</p>
+                        <p>Just as a biological immune system uses universal "detect and respond" logic, Antigence™ uses **Negative Selection** to classify any data stream as either "Self" (trusted truth) or "Non-Self" (hallucinations or threats).</p>
+                    </div>
+                    <div class="col-md-4 text-center">
+                        <i class="fas fa-project-diagram fa-5x text-primary opacity-25"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Equation 20 -->
+        <div class="card shadow-sm mb-5 border-0 bg-light">
+            <div class="card-body p-5">
+                <h2 class="fw-bold mb-3"><i class="fas fa-square-root-alt text-success"></i> Equation 20 ($R_q > R_{self}$)</h2>
+                <div class="bg-white p-4 rounded-3 border mb-4 text-center">
+                    <h3 class="font-monospace fw-bold text-success">$R_q > R_{self}$</h3>
+                    <p class="mb-0 text-muted">The Binary Threshold for Scientific Truth</p>
+                </div>
+                <p>This is the **Negative Selection Binding Rule**. It is the formal filter that determines scientific validity:</p>
+                <ul>
+                    <li><strong>$R_q$ (Query Affinity)</strong>: How closely a new signal matches an immune detector.</li>
+                    <li><strong>$R_{self}$ (Self Threshold)</strong>: The boundary of known, validated truths.</li>
+                </ul>
+                <p class="mb-0">A detector only fires if it falls outside the self-space. This is the **Zero-Trust formula** for high-stakes research.</p>
+            </div>
+        </div>
+
+        <!-- Modality Biasing -->
+        <div class="card shadow-sm mb-5 border-0">
+            <div class="card-body p-5">
+                <h2 class="fw-bold mb-3"><i class="fas fa-balance-scale text-warning"></i> Modality Biasing v1.0</h2>
+                <p>Not all data streams are equally trustworthy. Our research identifies specific weights for different signal modalities to maximize detection precision:</p>
+                <div class="table-responsive mt-3">
+                    <table class="table table-borderless bg-light rounded">
+                        <thead>
+                            <tr>
+                                <th>Modality</th>
+                                <th>Preprint Weight ($w$)</th>
+                                <th>Role</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>EEG (Bio-signal)</td>
+                                <td>0.28</td>
+                                <td>Primary Cognitive Signal</td>
+                            </tr>
+                            <tr>
+                                <td>ECG (Bio-signal)</td>
+                                <td>0.26</td>
+                                <td>Physiological Baseline</td>
+                            </tr>
+                            <tr>
+                                <td>LLM Metadata</td>
+                                <td>0.25</td>
+                                <td>Entropy & Hullucination Cues</td>
+                            </tr>
+                            <tr>
+                                <td>Citation Provenance</td>
+                                <td>0.14</td>
+                                <td>Academic Verification</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tier 1 Architecture Reference -->
+        <div class="text-center mt-5 p-5 border rounded-3 dashed-border">
+            <h4 class="fw-bold">Looking for the Architecture Diagram?</h4>
+            <p class="text-muted">The Tier 1 Orchestration Core overview is available on the <a href="/">Home Page</a>.</p>
+        </div>
+    </div>
+</div>
+
+<style>
+    .dashed-border {
+        border: 2px dashed #dee2e6 !important;
+    }
+</style>
+{% endblock %}

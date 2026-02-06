@@ -1,0 +1,78 @@
+p-value
+confidence interval
+standard deviation
+standard error
+mean
+median
+mode
+variance
+correlation
+regression
+linear regression
+logistic regression
+Cox regression
+hazard ratio
+odds ratio
+relative risk
+absolute risk
+chi-square test
+t-test
+ANOVA
+Mann-Whitney test
+Wilcoxon test
+Kruskal-Wallis test
+Fisher exact test
+log-rank test
+Kaplan-Meier
+survival analysis
+meta-analysis
+systematic review
+randomized controlled trial
+cohort study
+case-control study
+cross-sectional study
+prospective study
+retrospective study
+intention-to-treat
+per-protocol
+blinding
+placebo
+control group
+treatment group
+sample size
+power analysis
+effect size
+Cohen's d
+sensitivity
+specificity
+positive predictive value
+negative predictive value
+receiver operating characteristic
+area under curve
+false discovery rate
+Bonferroni correction
+Benjamini-Hochberg
+multiple testing correction
+bootstrap
+permutation test
+Bayesian
+frequentist
+prior probability
+posterior probability
+likelihood
+maximum likelihood
+expectation-maximization
+principal component analysis
+clustering
+k-means
+hierarchical clustering
+machine learning
+deep learning
+neural network
+random forest
+support vector machine
+cross-validation
+overfitting
+regularization
+feature selection
+dimensionality reduction

@@ -1,0 +1,18 @@
+# Letter confusions from OCR
+l -> 1, I
+O -> 0
+rn -> m
+cl -> d
+vv -> w
+ii -> u
+fi -> fi (ligature issue)
+fl -> fl (ligature issue)
+# Common OCR artifacts
+. -> ,
+: -> ;
+- -> –
+" -> "
+' -> '
+© -> (c)
+® -> (R)
+™ -> (TM)

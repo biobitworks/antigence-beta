@@ -1,0 +1,400 @@
+{% extends "base.html" %}
+
+{% block title %}Email Classification - IMMUNOS-MCP{% endblock %}
+
+{% block breadcrumb %}
+<nav aria-label="breadcrumb" class="container mt-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active">Email Classification</li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block content %}
+<style>
+    .upload-zone {
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .upload-zone:hover {
+        background-color: #f1f1f1 !important;
+        border-color: #28a745 !important;
+    }
+
+    .upload-zone.bg-secondary {
+        border-style: solid !important;
+    }
+</style>
+<div class="container">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1><i class="fas fa-envelope text-success"></i> Email/Phishing Classifier</h1>
+            <p class="lead">Detect spam and phishing attempts using immune pattern recognition</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Input Panel -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <ul class="nav nav-tabs card-header-tabs" id="inputTabs" role="tablist">
+                        <li class="nav-item">
+                            <button class="nav-link active text-white" id="quick-tab" data-bs-toggle="tab"
+                                data-bs-target="#quick-input" type="button" role="tab">
+                                <i class="fas fa-bolt"></i> Quick Input
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link text-white" id="advanced-tab" data-bs-toggle="tab"
+                                data-bs-target="#advanced-input" type="button" role="tab">
+                                <i class="fas fa-file-export"></i> Advanced / EML
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <div class="tab-content" id="inputTabsContent">
+                        <!-- Quick Input Tab -->
+                        <div class="tab-pane fade show active" id="quick-input" role="tabpanel">
+                            <div class="mb-3 mt-2">
+                                <label for="subjectInput" class="form-label">Subject:</label>
+                                <input type="text" class="form-control" id="subjectInput"
+                                    placeholder="URGENT: You've won $1,000,000!">
+                            </div>
+                            <div class="mb-3">
+                                <label for="bodyInput" class="form-label">Email Body:</label>
+                                <textarea class="form-control" id="bodyInput" rows="6"
+                                    placeholder="Dear Winner..."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Advanced Input Tab -->
+                        <div class="tab-pane fade" id="advanced-input" role="tabpanel">
+                            <div class="mb-3 mt-2">
+                                <label for="fileInput" class="form-label">Upload Email File (.eml):</label>
+                                <div class="upload-zone p-4 border border-dashed rounded text-center bg-light"
+                                    id="dropZone">
+                                    <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-2"></i>
+                                    <p class="mb-0">Drag & drop .eml file or click to browse</p>
+                                    <input type="file" id="fileInput" class="d-none" accept=".eml">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="rawInput" class="form-label">Or Paste Full Email (with headers):</label>
+                                <textarea class="form-control font-monospace" id="rawInput" rows="8" placeholder="Delivered-To: user@example.com
+Subject: ...
+..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Quick Examples:</label>
+                        <div class="d-flex flex-wrap gap-2">
+                            <button class="btn btn-outline-danger btn-sm" onclick="setExample('spam')">
+                                <i class="fas fa-ban"></i> Spam
+                            </button>
+                            <button class="btn btn-outline-warning btn-sm" onclick="setExample('phishing')">
+                                <i class="fas fa-fish"></i> Phishing
+                            </button>
+                            <button class="btn btn-outline-success btn-sm" onclick="setExample('legitimate')">
+                                <i class="fas fa-check"></i> Legitimate
+                            </button>
+                        </div>
+                    </div>
+                    <button class="btn btn-success w-100" id="classifyBtn" onclick="handleClassification()">
+                        <i class="fas fa-filter"></i> Analyze Email
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Panel -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-dark text-white">
+                    <i class="fas fa-clipboard-check"></i> Classification Results
+                </div>
+                <div class="card-body" id="resultsPanel">
+                    <div class="text-center text-muted py-5">
+                        <i class="fas fa-inbox fa-4x mb-3"></i>
+                        <p>Submit an email to see classification</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Indicators Panel -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-flag"></i> Detection Indicators
+                </div>
+                <div class="card-body">
+                    <div class="row" id="indicatorsPanel">
+                        <div class="col-md-4 mb-3">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-exclamation-circle fa-2x text-danger mb-2"></i>
+                                    <h6>Urgency Signals</h6>
+                                    <span class="badge bg-secondary" id="urgencyBadge">Not detected</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-dollar-sign fa-2x text-warning mb-2"></i>
+                                    <h6>Financial Bait</h6>
+                                    <span class="badge bg-secondary" id="financialBadge">Not detected</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-link fa-2x text-info mb-2"></i>
+                                    <h6>Suspicious Links</h6>
+                                    <span class="badge bg-secondary" id="linksBadge">Not detected</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Panel -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-chart-bar"></i> Classification History
+                </div>
+                <div class="card-body">
+                    <div id="historyChart"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-info-circle"></i> About This Classifier
+                </div>
+                <div class="card-body">
+                    <p>This email classifier uses B Cell pattern matching to identify:</p>
+                    <ul>
+                        <li><strong>Spam:</strong> Unwanted promotional or junk emails</li>
+                        <li><strong>Phishing:</strong> Fraudulent attempts to steal information</li>
+                        <li><strong>Ham:</strong> Legitimate, wanted emails</li>
+                    </ul>
+                    <p class="text-muted mb-0">
+                        <small>Powered by IMMUNOS-MCP immune-inspired algorithms</small>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    const examples = {
+        spam: {
+            subject: "CONGRATULATIONS! You've Won $1,000,000!!!",
+            body: "Dear Lucky Winner,\n\nYou have been randomly selected to receive ONE MILLION DOLLARS! This is NOT a joke!\n\nTo claim your prize, simply click the link below and provide your bank details:\nhttp://totally-legit-prize.com/claim\n\nACT NOW - This offer expires in 24 HOURS!\n\nBest regards,\nThe International Lottery Commission"
+        },
+        phishing: {
+            subject: "Urgent: Your Account Has Been Compromised",
+            body: "Dear Valued Customer,\n\nWe have detected suspicious activity on your account. Your account will be suspended unless you verify your identity immediately.\n\nClick here to verify: http://bank-security-update.com/verify\n\nYou will need to provide:\n- Your username and password\n- Social Security Number\n- Credit card details\n\nFailure to act within 12 hours will result in permanent account closure.\n\nSecurity Team"
+        },
+        legitimate: {
+            subject: "Meeting Tomorrow at 2pm",
+            body: "Hi Team,\n\nJust a reminder that we have our weekly sync meeting tomorrow at 2pm in Conference Room B.\n\nAgenda:\n1. Project status updates\n2. Q4 planning discussion\n3. Open items\n\nPlease come prepared with your status reports.\n\nBest,\nSarah"
+        }
+    };
+
+    // Drag and Drop Logic
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+
+    dropZone.onclick = () => fileInput.click();
+
+    dropZone.ondragover = (e) => {
+        e.preventDefault();
+        dropZone.classList.add('bg-secondary', 'text-white');
+    };
+
+    dropZone.ondragleave = () => {
+        dropZone.classList.remove('bg-secondary', 'text-white');
+    };
+
+    dropZone.ondrop = (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('bg-secondary', 'text-white');
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            fileInput.files = files;
+            dropZone.querySelector('p').textContent = files[0].name;
+        }
+    };
+
+    fileInput.onchange = () => {
+        if (fileInput.files.length > 0) {
+            dropZone.querySelector('p').textContent = fileInput.files[0].name;
+        }
+    };
+
+    function setExample(type) {
+        // Switch to quick tab for examples
+        const quickTab = new bootstrap.Tab(document.getElementById('quick-tab'));
+        quickTab.show();
+
+        document.getElementById('subjectInput').value = examples[type].subject;
+        document.getElementById('bodyInput').value = examples[type].body;
+    }
+
+    async function handleClassification() {
+        const activeTab = document.querySelector('.nav-link.active').id;
+        let payload = {};
+
+        if (activeTab === 'quick-tab') {
+            const subject = document.getElementById('subjectInput').value;
+            const body = document.getElementById('bodyInput').value;
+            if (!subject.trim() && !body.trim()) {
+                alert('Please enter an email subject or body');
+                return;
+            }
+            payload = { subject, body, mode: 'quick' };
+        } else {
+            const rawText = document.getElementById('rawInput').value;
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const text = await file.text();
+                payload = { raw_text: text, mode: 'advanced', filename: file.name };
+            } else if (rawText.trim()) {
+                payload = { raw_text: rawText, mode: 'advanced' };
+            } else {
+                alert('Please upload a .eml file or paste raw email text');
+                return;
+            }
+        }
+
+        classifyEmail(payload);
+    }
+
+    async function classifyEmail(payload) {
+        const resultsPanel = document.getElementById('resultsPanel');
+        const classifyBtn = document.getElementById('classifyBtn');
+
+        // Update UI
+        classifyBtn.disabled = true;
+        classifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+        resultsPanel.innerHTML = '<div class="text-center py-5"><i class="fas fa-spinner fa-spin fa-3x"></i><p class="mt-3">Antigent parsing payload...</p></div>';
+
+        try {
+            const response = await fetch('/api/classify_email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+            const textForIndicators = payload.mode === 'quick' ?
+                (payload.subject + ' ' + payload.body) : payload.raw_text;
+
+            displayResults(result, textForIndicators);
+        } catch (error) {
+            resultsPanel.innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
+        } finally {
+            classifyBtn.disabled = false;
+            classifyBtn.innerHTML = '<i class="fas fa-filter"></i> Analyze Email';
+        }
+    }
+
+    function displayResults(result, emailText) {
+        const resultsPanel = document.getElementById('resultsPanel');
+        const isSpam = result.classification === 'spam';
+        const alertClass = isSpam ? 'danger' : 'success';
+        const icon = isSpam ? 'ban' : 'check-circle';
+
+        let indicatorsHtml = '';
+        if (result.indicators && result.indicators.length > 0) {
+            indicatorsHtml = '<p class="mb-1"><strong>Detected Indicators:</strong></p><ul class="small mb-3">';
+            result.indicators.forEach(ind => {
+                indicatorsHtml += `<li>${ind}</li>`;
+            });
+            indicatorsHtml += '</ul>';
+        }
+
+        let metadataHtml = '';
+        if (result.parsed_metadata) {
+            metadataHtml = `
+            <div class="mt-3 pt-3 border-top small text-muted">
+                <p class="mb-1"><strong>Antigent Metadata:</strong></p>
+                <div class="bg-light p-2 rounded">
+                    <div>Subject: ${result.parsed_metadata.subject || 'None'}</div>
+                    <div>Images: ${result.parsed_metadata.has_images ? '✅ Detected' : '❌ None'}</div>
+                    <div>Body Length: ${result.parsed_metadata.body_length} chars</div>
+                </div>
+            </div>
+        `;
+        }
+
+        resultsPanel.innerHTML = `
+        <div class="alert alert-${alertClass} text-center shadow-sm">
+            <i class="fas fa-${icon} fa-3x mb-2"></i>
+            <h3>${result.classification.toUpperCase()}</h3>
+        </div>
+        <div class="mt-3">
+            <p class="mb-1"><strong>Confidence:</strong> ${(result.confidence * 100).toFixed(1)}%</p>
+            <div class="progress mb-3" style="height: 10px;">
+                <div class="progress-bar bg-${isSpam ? 'danger' : 'success'}" style="width: ${result.confidence * 100}%"></div>
+            </div>
+            ${indicatorsHtml}
+            ${metadataHtml}
+        </div>
+    `;
+
+        // Update indicator badges based on email content
+        updateIndicators(emailText);
+    }
+
+    function updateIndicators(text) {
+        const textLower = text.toLowerCase();
+
+        // Check for urgency
+        const urgencyWords = ['urgent', 'immediately', 'act now', 'expires', 'limited time', 'hurry'];
+        const hasUrgency = urgencyWords.some(w => textLower.includes(w));
+        updateBadge('urgencyBadge', hasUrgency);
+
+        // Check for financial bait
+        const financialWords = ['$', 'money', 'prize', 'winner', 'million', 'cash', 'bank'];
+        const hasFinancial = financialWords.some(w => textLower.includes(w));
+        updateBadge('financialBadge', hasFinancial);
+
+        // Check for suspicious links
+        const hasLinks = textLower.includes('http') || textLower.includes('click here');
+        updateBadge('linksBadge', hasLinks);
+    }
+
+    function updateBadge(id, detected) {
+        const badge = document.getElementById(id);
+        if (detected) {
+            badge.className = 'badge bg-danger';
+            badge.textContent = 'Detected';
+        } else {
+            badge.className = 'badge bg-secondary';
+            badge.textContent = 'Not detected';
+        }
+    }
+</script>
+{% endblock %}

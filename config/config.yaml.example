@@ -1,0 +1,91 @@
+# IMMUNOS-MCP Configuration
+# Copy this to ~/.immunos-mcp/config.yaml and customize
+
+# Operating mode: "air_gapped" or "online"
+mode: air_gapped
+
+# Orchestrator configuration
+orchestrator:
+  # Orchestrator type: "local" or "remote"
+  type: local
+  
+  # Local orchestrator settings (for air-gapped mode)
+  local:
+    enabled: true
+    # Path to local orchestrator (null = use built-in)
+    path: null
+    # Path to store models and state
+    models_path: ~/.immunos-mcp/models
+    # Path to store memory/state
+    state_path: ~/.immunos-mcp/state
+    
+  # Remote orchestrator settings (for online mode)
+  remote:
+    enabled: false
+    # Remote orchestrator endpoint
+    endpoint: http://localhost:8000
+    # API key (if required)
+    api_key: null
+    # Request timeout in seconds
+    timeout: 30
+    # Number of retries on failure
+    retry_count: 3
+    # Health check interval in seconds
+    health_check_interval: 60
+
+# Agent configuration
+agents:
+  bcell:
+    enabled: true
+    # Model to use (null = use default from model_roles.yaml)
+    model: null
+    # Path to saved state (null = use default)
+    state_path: null
+    
+  nk_cell:
+    enabled: true
+    model: null
+    state_path: null
+    
+  dendritic:
+    enabled: true
+    
+  memory:
+    enabled: true
+    # Path to memory store
+    path: ~/.immunos-mcp/memory
+
+# LLM configuration
+llm:
+  # Provider: "ollama", "openai", "anthropic", or null (disabled)
+  provider: ollama
+  # Base URL for LLM API
+  base_url: http://localhost:11434
+  # API key (if required)
+  api_key: null
+  # Model assignments
+  models:
+    bcell: qwen2.5-coder:7b
+    nk_cell: deepseek-r1:14b
+    t_cell: deepseek-r1:14b
+    dendritic: qwen2.5:1.5b
+    memory: qwen2.5:1.5b
+
+# Network detection
+network:
+  # Auto-detect mode based on connectivity
+  auto_detect: true
+  # Test endpoints for connectivity check
+  test_endpoints:
+    - https://www.google.com
+    - https://api.openai.com
+  # Timeout for connectivity test (seconds)
+  test_timeout: 5
+
+# Logging
+logging:
+  level: INFO  # DEBUG, INFO, WARNING, ERROR
+  file: ~/.immunos-mcp/logs/immunos-mcp.log
+  console: true
+
+

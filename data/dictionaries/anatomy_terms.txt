@@ -1,0 +1,72 @@
+brain
+cerebrum
+cerebellum
+brainstem
+hippocampus
+amygdala
+thalamus
+hypothalamus
+cortex
+prefrontal cortex
+temporal lobe
+parietal lobe
+occipital lobe
+frontal lobe
+basal ganglia
+spinal cord
+peripheral nervous system
+autonomic nervous system
+heart
+atrium
+ventricle
+aorta
+coronary artery
+pulmonary artery
+vein
+capillary
+lung
+bronchus
+alveolus
+diaphragm
+liver
+hepatocyte
+bile duct
+gallbladder
+pancreas
+islet of Langerhans
+stomach
+small intestine
+large intestine
+colon
+rectum
+kidney
+nephron
+glomerulus
+tubule
+ureter
+bladder
+urethra
+bone marrow
+thymus
+spleen
+lymph node
+tonsil
+skin
+epidermis
+dermis
+muscle
+skeletal muscle
+cardiac muscle
+smooth muscle
+tendon
+ligament
+cartilage
+bone
+joint
+eye
+retina
+cornea
+lens
+ear
+cochlea
+vestibular system

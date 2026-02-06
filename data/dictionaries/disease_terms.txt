@@ -1,0 +1,82 @@
+Alzheimer disease
+Parkinson disease
+Huntington disease
+amyotrophic lateral sclerosis
+multiple sclerosis
+epilepsy
+stroke
+traumatic brain injury
+brain tumor
+glioblastoma
+meningioma
+schizophrenia
+bipolar disorder
+major depressive disorder
+anxiety disorder
+autism spectrum disorder
+attention deficit hyperactivity disorder
+post-traumatic stress disorder
+obsessive-compulsive disorder
+diabetes mellitus
+type 1 diabetes
+type 2 diabetes
+obesity
+metabolic syndrome
+hyperlipidemia
+hypertension
+coronary artery disease
+myocardial infarction
+heart failure
+atrial fibrillation
+cardiomyopathy
+atherosclerosis
+peripheral artery disease
+deep vein thrombosis
+pulmonary embolism
+asthma
+chronic obstructive pulmonary disease
+pulmonary fibrosis
+pneumonia
+tuberculosis
+lung cancer
+breast cancer
+prostate cancer
+colorectal cancer
+pancreatic cancer
+liver cancer
+gastric cancer
+ovarian cancer
+cervical cancer
+melanoma
+lymphoma
+leukemia
+multiple myeloma
+rheumatoid arthritis
+systemic lupus erythematosus
+psoriasis
+inflammatory bowel disease
+Crohn disease
+ulcerative colitis
+celiac disease
+hepatitis B
+hepatitis C
+cirrhosis
+fatty liver disease
+chronic kidney disease
+glomerulonephritis
+polycystic kidney disease
+osteoporosis
+osteoarthritis
+scoliosis
+muscular dystrophy
+cystic fibrosis
+sickle cell disease
+thalassemia
+hemophilia
+HIV/AIDS
+malaria
+dengue
+influenza
+COVID-19
+Ebola
+Zika virus

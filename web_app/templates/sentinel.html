@@ -1,0 +1,1011 @@
+{% extends "base.html" %}
+{% block title %}Antigence™ - Sentinel Ops{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+  <!-- Header with controls -->
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <div>
+      <h2 class="mb-1"><i class="fas fa-shield-alt"></i> Sentinel Ops</h2>
+      <div class="text-muted small">
+        Real-time security monitoring and incident response
+      </div>
+    </div>
+    <div class="d-flex gap-2 flex-wrap justify-content-end">
+      <button class="btn btn-outline-info" id="refreshBtn" title="Refresh all panels without page reload">
+        <i class="fas fa-sync-alt"></i> Refresh
+      </button>
+      {% if sentinel_status.platform == 'darwin' %}
+        {% if sentinel_status.loaded %}
+          <button class="btn btn-outline-danger" id="stopSentinelBtn" title="Stop the launchd interval job">
+            <i class="fas fa-stop-circle"></i> Stop
+          </button>
+        {% else %}
+          <button class="btn btn-outline-success" id="startSentinelBtn" title="Start the launchd interval job" {% if not sentinel_status.plist_exists %}disabled{% endif %}>
+            <i class="fas fa-play-circle"></i> Start
+          </button>
+        {% endif %}
+      {% else %}
+        <button class="btn btn-outline-secondary" disabled title="launchd is only available on macOS">
+          <i class="fas fa-ban"></i> Start/Stop (macOS only)
+        </button>
+      {% endif %}
+      <button class="btn btn-outline-primary" id="runOnceBtn" title="Run the watcher script once" {% if not sentinel_status.watcher_exists %}disabled{% endif %}>
+        <i class="fas fa-bolt"></i> Run Once
+      </button>
+      <button class="btn btn-outline-secondary btn-sm" id="togglePathsBtn">
+        <i class="fas fa-eye"></i> Paths
+      </button>
+    </div>
+  </div>
+
+  <!-- Platform warning for non-macOS -->
+  {% if sentinel_status.platform != 'darwin' %}
+  <div class="alert alert-info py-2 mb-3">
+    <i class="fas fa-info-circle me-2"></i>
+    <strong>Linux/Other:</strong> launchd controls are macOS-only. Use <code>cron</code> or <code>systemd</code> to schedule the watcher:
+    <code class="ms-2">*/5 * * * * python3 {{ sentinel_status.watcher_path }}</code>
+  </div>
+  {% endif %}
+
+  <!-- Missing JSONL warning -->
+  {% if not sentinel_status.events_exists %}
+  <div class="alert alert-warning py-2 mb-3">
+    <i class="fas fa-exclamation-triangle me-2"></i>
+    <strong>Events file not found:</strong> <code>{{ sentinel_status.events_path }}</code>
+    <div class="small mt-1">
+      Setup: <code>mkdir -p ~/.antigence/sentinel && touch ~/.antigence/sentinel/events.jsonl</code>
+      <br>Or set <code>ANTIGENCE_SENTINEL_EVENTS_PATH</code> to your existing events file.
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Status Row: Sentinel + Ollama side by side -->
+  <div class="row g-3 mb-3">
+    <!-- Sentinel Status Card -->
+    <div class="col-lg-8">
+      <div class="card h-100 {% if sentinel_status.loaded %}border-success{% else %}border-secondary{% endif %}">
+        <div class="card-header py-2 d-flex align-items-center justify-content-between">
+          <span class="fw-bold">
+            <i class="fas fa-satellite-dish me-1"></i> Sentinel
+            {% if sentinel_status.loaded %}
+              <span class="badge bg-success ms-2">RUNNING</span>
+            {% else %}
+              <span class="badge bg-secondary ms-2">STOPPED</span>
+            {% endif %}
+          </span>
+          <span class="badge bg-dark">{{ sentinel_status.platform }}</span>
+        </div>
+        <div class="card-body py-2 small">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-1"><strong>LaunchAgent:</strong> <code>{{ sentinel_status.label }}</code></div>
+              <div class="mb-1"><strong>Plist:</strong> <code class="text-truncate d-inline-block" style="max-width: 300px;">{{ sentinel_status.plist_path }}</code>
+                {% if sentinel_status.plist_exists %}<span class="badge bg-success">ok</span>{% else %}<span class="badge bg-warning text-dark">missing</span>{% endif %}
+              </div>
+              <div class="mb-1"><strong>Watcher:</strong>
+                {% if sentinel_status.watcher_exists %}<span class="badge bg-success">ok</span>{% else %}<span class="badge bg-warning text-dark">missing</span>{% endif %}
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-1"><strong>Events:</strong>
+                {% if sentinel_status.events_exists %}<span class="badge bg-success">{{ events|length }} loaded</span>{% else %}<span class="badge bg-warning text-dark">file missing</span>{% endif %}
+              </div>
+              <div class="mb-1"><strong>Logs:</strong> <code class="text-truncate d-inline-block" style="max-width: 250px;" title="{{ sentinel_status.logs.stdout }}">...{{ sentinel_status.logs.stdout.split('/')[-1] }}</code></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ollama Status Card -->
+    <div class="col-lg-4">
+      <div class="card h-100 {% if sentinel_status.ollama.running and sentinel_status.ollama.model_available %}border-success{% elif sentinel_status.ollama.installed %}border-warning{% else %}border-secondary{% endif %}">
+        <div class="card-header py-2 d-flex align-items-center justify-content-between">
+          <span class="fw-bold"><i class="fas fa-brain me-1"></i> Ollama Orchestrator</span>
+          {% if sentinel_status.ollama.running and sentinel_status.ollama.model_available %}
+            <span class="badge bg-success">Ready</span>
+          {% elif sentinel_status.ollama.running %}
+            <span class="badge bg-warning text-dark">Model Missing</span>
+          {% elif sentinel_status.ollama.installed %}
+            <span class="badge bg-warning text-dark">Not Running</span>
+          {% else %}
+            <span class="badge bg-secondary">Not Installed</span>
+          {% endif %}
+        </div>
+        <div class="card-body py-2 small">
+          <div class="mb-1"><strong>URL:</strong> <code>{{ sentinel_status.ollama.url }}</code></div>
+          <div class="mb-1"><strong>Model:</strong> <code>{{ sentinel_status.ollama.model }}</code></div>
+          <div class="mb-2">
+            <span class="badge {% if sentinel_status.ollama.installed %}bg-success{% else %}bg-secondary{% endif %}">installed</span>
+            <span class="badge {% if sentinel_status.ollama.running %}bg-success{% else %}bg-secondary{% endif %}">running</span>
+            <span class="badge {% if sentinel_status.ollama.model_available %}bg-success{% else %}bg-secondary{% endif %}">model</span>
+          </div>
+          {% if not sentinel_status.ollama.installed %}
+            <div class="text-muted"><i class="fas fa-arrow-right me-1"></i> <code>brew install ollama</code> or visit ollama.com</div>
+          {% elif not sentinel_status.ollama.running %}
+            <div class="text-muted"><i class="fas fa-arrow-right me-1"></i> <code>ollama serve</code></div>
+          {% elif not sentinel_status.ollama.model_available %}
+            <div class="text-muted"><i class="fas fa-arrow-right me-1"></i> <code>ollama pull {{ sentinel_status.ollama.model }}</code></div>
+          {% else %}
+            <div class="text-success"><i class="fas fa-check me-1"></i> LLM orchestration available</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LLM Role Matrix -->
+  {% set llm = sentinel_status.llm_models %}
+  <div class="card mb-4" id="llmRolesSection">
+    <div class="card-header py-2 d-flex align-items-center justify-content-between">
+      <div class="fw-bold"><i class="fas fa-brain"></i> LLM Role Matrix</div>
+      <div class="small text-muted">Installed: {{ llm.installed_models|length }}</div>
+    </div>
+    <div class="card-body py-2 small">
+      <div class="text-muted mb-2">
+        Orchestrator + specialist models (per-role). Configure via <code>{{ llm.config.env }}</code> (JSON)
+        or <code>{{ llm.config.file }}</code>. Default: <code>{{ llm.default_model }}</code>.
+      </div>
+      {% if llm.config.errors %}
+        <div class="alert alert-warning py-2 mb-2">
+          <strong>Config warnings:</strong>
+          <ul class="mb-0">
+            {% for e in llm.config.errors %}
+              <li>{{ e }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+      <div class="table-responsive">
+        <table class="table table-sm align-middle mb-0">
+          <thead>
+            <tr>
+              <th style="min-width: 160px;">Role</th>
+              <th style="min-width: 170px;">Model</th>
+              <th style="min-width: 120px;">Availability</th>
+              <th>Purpose</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in llm.roles %}
+            <tr>
+              <td>
+                <code>{{ r.role }}</code>
+                <div class="text-muted">{{ r.label }}</div>
+              </td>
+              <td>
+                <code>{{ r.model }}</code>
+                {% if r.source == 'mapping' %}
+                  <span class="badge bg-info text-dark ms-2">custom</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if sentinel_status.ollama.running %}
+                  {% if r.available %}
+                    <span class="badge bg-success">available</span>
+                  {% else %}
+                    <span class="badge bg-warning text-dark">missing</span>
+                  {% endif %}
+                {% else %}
+                  <span class="badge bg-secondary">ollama stopped</span>
+                {% endif %}
+              </td>
+              <td class="text-muted">{{ r.purpose }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% if sentinel_status.ollama.installed and sentinel_status.ollama.running and llm.missing %}
+        <div class="mt-2 text-muted">
+          Missing roles will show <span class="badge bg-warning text-dark">missing</span>. Install with:
+          <code>ollama pull {{ llm.missing[0].model }}</code>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Antigent Events (LLM Calls) -->
+  <div class="card mb-4" id="antigentEventsSection">
+    <div class="card-header py-2 d-flex align-items-center justify-content-between">
+      <div class="fw-bold"><i class="fas fa-robot"></i> Antigent Events (LLM Calls)</div>
+      <div class="d-flex align-items-center gap-2">
+        <select class="form-select form-select-sm" id="filterAntigentRole" style="width: auto; min-width: 120px;">
+          <option value="">All Roles</option>
+          <option value="orchestrator">orchestrator</option>
+          <option value="bcell">bcell</option>
+          <option value="nk">nk</option>
+          <option value="tcell_security">tcell_security</option>
+          <option value="dendritic_summarizer">dendritic_summarizer</option>
+        </select>
+        <span class="badge bg-dark">{{ antigent_events|length }} calls</span>
+      </div>
+    </div>
+    <div class="card-body py-2">
+      {% if antigent_events %}
+        <div class="table-responsive" style="max-height: 250px; overflow-y: auto;">
+          <table class="table table-sm align-middle mb-0" id="antigentEventsTable">
+            <thead class="sticky-top bg-white">
+              <tr>
+                <th>Time</th>
+                <th>Role</th>
+                <th>Model</th>
+                <th>Status</th>
+                <th>Tokens</th>
+                <th>Latency</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for ev in antigent_events[:30] %}
+                <tr data-role="{{ ev.role }}">
+                  <td class="small text-muted text-nowrap"><code>{{ ev.ts[:16] if ev.ts else '' }}</code></td>
+                  <td>
+                    {% if ev.role == 'orchestrator' %}
+                      <span class="badge bg-primary">{{ ev.role }}</span>
+                    {% elif ev.role == 'tcell_security' %}
+                      <span class="badge bg-danger">{{ ev.role }}</span>
+                    {% elif ev.role == 'bcell' %}
+                      <span class="badge bg-info text-dark">{{ ev.role }}</span>
+                    {% elif ev.role == 'nk' %}
+                      <span class="badge bg-warning text-dark">{{ ev.role }}</span>
+                    {% else %}
+                      <span class="badge bg-secondary">{{ ev.role }}</span>
+                    {% endif %}
+                  </td>
+                  <td class="small"><code>{{ ev.model }}</code></td>
+                  <td>
+                    {% if ev.success %}
+                      <span class="badge bg-success">ok</span>
+                    {% else %}
+                      <span class="badge bg-danger" title="{{ ev.error }}">fail</span>
+                    {% endif %}
+                  </td>
+                  <td class="small">{{ ev.tokens or 0 }}</td>
+                  <td class="small">{{ ev.latency_ms|round(0)|int }}ms</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <div class="small text-muted mt-1">
+          Showing {{ antigent_events[:30]|length }} of {{ antigent_events|length }} antigent calls
+        </div>
+      {% else %}
+        <div class="text-muted py-2 small">
+          No antigent (LLM) calls yet. They appear when antibodies trigger LLM analysis.
+          <br>Try: <code>POST /api/scan</code> with <code>pipeline: "deep"</code> or <code>POST /api/validate_publications</code> with <code>mode: "orchestrated"</code>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Stats row -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-3">
+      <div class="card">
+        <div class="card-body">
+          <div class="text-muted small">Open Tickets</div>
+          <div class="fs-3 fw-bold">{{ ticket_stats.open }}</div>
+          <div class="small text-muted">Total: {{ ticket_stats.total }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card">
+        <div class="card-body">
+          <div class="text-muted small">Solution Rate</div>
+          <div class="fs-3 fw-bold">{{ (ticket_stats.solution_rate * 100) | round(1) }}%</div>
+          <div class="small text-muted">Closed: {{ ticket_stats.closed }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card border-danger">
+        <div class="card-body">
+          <div class="text-muted small">Severity</div>
+          <div class="d-flex gap-3 align-items-end">
+            <div>
+              <div class="fw-bold text-danger">High</div>
+              <div class="fs-4">{{ ticket_stats.by_severity.high }}</div>
+            </div>
+            <div>
+              <div class="fw-bold text-warning">Med</div>
+              <div class="fs-4">{{ ticket_stats.by_severity.med }}</div>
+            </div>
+            <div>
+              <div class="fw-bold text-secondary">Low</div>
+              <div class="fs-4">{{ ticket_stats.by_severity.low }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card">
+        <div class="card-body">
+          <div class="text-muted small">Telemetry Activity (window)</div>
+          {% if telemetry_activity %}
+            <ol class="mb-0 small">
+              {% for label, count in telemetry_activity[:5] %}
+                <li><code>{{ label }}</code> — {{ count }}</li>
+              {% endfor %}
+            </ol>
+          {% else %}
+            <div class="small text-muted mb-0">No telemetry in window.</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detections -->
+  <div class="card mb-4" id="detectionsSection">
+    <div class="card-header py-2 d-flex align-items-center justify-content-between">
+      <div class="fw-bold"><i class="fas fa-biohazard"></i> Detections</div>
+      <div class="d-flex align-items-center gap-2">
+        <select class="form-select form-select-sm" id="filterDetectionDomain" style="width: auto; min-width: 120px;">
+          <option value="">All Domains</option>
+          {% for domain, _ in detection_stats.top_domains %}
+            <option value="{{ domain }}">{{ domain }}</option>
+          {% endfor %}
+        </select>
+        <div class="btn-group btn-group-sm" role="group" aria-label="Detection result filter">
+          <input type="checkbox" class="btn-check" id="filterDangerDetections" autocomplete="off">
+          <label class="btn btn-outline-danger" for="filterDangerDetections">danger</label>
+          <input type="checkbox" class="btn-check" id="filterNonSelfDetections" autocomplete="off">
+          <label class="btn btn-outline-warning" for="filterNonSelfDetections">non_self</label>
+        </div>
+        <span class="badge bg-dark">{{ detection_stats.counts.total }} total</span>
+        <span class="badge bg-info text-dark">{{ (detection_stats.incident_rate * 100) | round(1) }}% incident</span>
+      </div>
+    </div>
+    <div class="card-body py-2">
+      <div class="row g-2 mb-2">
+        <div class="col-md-3">
+          <div class="p-2 border rounded small">
+            <div class="text-muted mb-1">Counts</div>
+            <div class="d-flex flex-wrap gap-1">
+              <span class="badge bg-success">self: {{ detection_stats.counts.self }}</span>
+              <span class="badge bg-warning text-dark">non_self: {{ detection_stats.counts.non_self }}</span>
+              <span class="badge bg-danger">danger: {{ detection_stats.counts.danger }}</span>
+              <span class="badge bg-secondary">uncertain: {{ detection_stats.counts.uncertain }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-9">
+          <div class="p-2 border rounded small">
+            <div class="text-muted mb-1">Top Domains</div>
+            {% if detection_stats.top_domains %}
+              <div class="d-flex flex-wrap gap-2">
+                {% for domain, d in detection_stats.top_domains[:6] %}
+                  <span class="badge {% if d.danger > 0 %}bg-danger{% elif d.non_self > 0 %}bg-warning text-dark{% else %}bg-secondary{% endif %}">
+                    {{ domain }}: {{ d.total }}
+                  </span>
+                {% endfor %}
+              </div>
+            {% else %}
+              <span class="text-muted">No detections yet</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      {% if detections %}
+        <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+          <table class="table table-sm align-middle mb-0" id="detectionsTable">
+            <thead class="sticky-top bg-white">
+              <tr>
+                <th>Time</th>
+                <th>Domain</th>
+                <th>Result</th>
+                <th>Confidence</th>
+                <th>Danger Signal</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for e in detections[:50] %}
+                {% set p = e.payload %}
+                {% set result = (p.get("result","") or "unknown") %}
+                <tr data-domain="{{ p.get('domain','unknown') }}" data-result="{{ result }}">
+                  <td class="small text-muted text-nowrap"><code>{{ e.created_at[:16] if e.created_at else '' }}</code></td>
+                  <td><code>{{ p.get("domain","unknown") }}</code></td>
+                  <td>
+                    {% if result == "danger" %}
+                      <span class="badge bg-danger">danger</span>
+                    {% elif result == "non_self" %}
+                      <span class="badge bg-warning text-dark">non_self</span>
+                    {% elif result == "self" %}
+                      <span class="badge bg-success">self</span>
+                    {% elif result == "uncertain" %}
+                      <span class="badge bg-secondary">uncertain</span>
+                    {% else %}
+                      <span class="badge bg-dark">{{ result }}</span>
+                    {% endif %}
+                  </td>
+                  <td class="small">{{ (p.get("confidence",0.0) * 100) | round(1) }}%</td>
+                  <td class="small">{{ (p.get("danger_signal",0.0) * 100) | round(1) }}%</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <div class="small text-muted mt-1">Showing latest 50 of {{ detections|length }} detections</div>
+      {% else %}
+        <div class="text-muted py-2 small">No detection events yet. They appear when posting to <code>/api/events/detection</code>.</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Tickets -->
+  <div class="card mb-4" id="ticketsSection">
+    <div class="card-header py-2 d-flex align-items-center justify-content-between">
+      <div class="fw-bold"><i class="fas fa-ticket-alt"></i> Open Tickets</div>
+      <div class="d-flex align-items-center gap-2">
+        <div class="btn-group btn-group-sm" role="group" aria-label="Ticket severity filter">
+          <input type="checkbox" class="btn-check" id="filterHighTickets" autocomplete="off">
+          <label class="btn btn-outline-danger" for="filterHighTickets" title="Show only HIGH severity">HIGH</label>
+          <input type="checkbox" class="btn-check" id="filterMedTickets" autocomplete="off">
+          <label class="btn btn-outline-warning" for="filterMedTickets" title="Show only MED severity">MED</label>
+        </div>
+        <button class="btn btn-sm btn-outline-warning" id="ticketLatestDetectionBtn" title="Create ticket from latest detection">
+          <i class="fas fa-biohazard"></i> Ticket Detection
+        </button>
+        <button class="btn btn-sm btn-danger" id="ingestLatestBtn" title="Create ticket from latest sentinel event">
+          <i class="fas fa-ticket"></i> Ticket Event
+        </button>
+      </div>
+    </div>
+    <div class="card-body py-2">
+      {% if open_tickets %}
+        <div class="table-responsive">
+          <table class="table table-sm align-middle mb-0" id="ticketsTable">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Severity</th>
+                <th>Summary</th>
+                <th>Created</th>
+                <th class="text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for t in open_tickets %}
+              <tr data-severity="{{ t.severity }}">
+                <td><code>#{{ t.id }}</code></td>
+                <td>
+                  {% if t.severity == "high" %}
+                    <span class="badge bg-danger">HIGH</span>
+                  {% elif t.severity == "med" %}
+                    <span class="badge bg-warning text-dark">MED</span>
+                  {% else %}
+                    <span class="badge bg-secondary">LOW</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <div class="fw-bold text-truncate" style="max-width: 400px;">{{ t.summary }}</div>
+                  <div class="small text-muted">Source: <code>{{ t.source }}</code>{% if t.source_event_ts %} • <code>{{ t.source_event_ts }}</code>{% endif %}</div>
+                </td>
+                <td class="small text-muted text-nowrap">{{ t.created_at.strftime('%m-%d %H:%M') if t.created_at else '' }}</td>
+                <td class="text-end text-nowrap">
+                  <button class="btn btn-sm btn-outline-primary viewTicketBtn" data-ticket-id="{{ t.id }}">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                  <button class="btn btn-sm btn-outline-success closeTicketBtn" data-ticket-id="{{ t.id }}">
+                    <i class="fas fa-check"></i>
+                  </button>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <div class="small text-muted mt-1">Showing {{ open_tickets|length }} open tickets</div>
+      {% else %}
+        <div class="text-muted py-2">No open tickets. All clear.</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Ticket Detail Modal -->
+  <div class="modal fade" id="ticketDetailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="fas fa-ticket-alt"></i> Ticket <span id="ticketDetailId"></span></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-2">
+            <span class="badge bg-secondary" id="ticketDetailStatus"></span>
+            <span class="badge bg-secondary" id="ticketDetailSeverity"></span>
+            <span class="badge bg-secondary" id="ticketDetailSource"></span>
+          </div>
+          <div class="mb-3">
+            <div class="fw-bold">Summary</div>
+            <div id="ticketDetailSummary" class="text-muted"></div>
+          </div>
+          <div class="mb-3">
+            <div class="fw-bold">Correlation</div>
+            <div class="small text-muted">
+              Source event ts: <code id="ticketDetailEventTs"></code>
+            </div>
+          </div>
+          <div class="mb-3">
+            <div class="fw-bold">Details</div>
+            <pre class="bg-light p-3 rounded border" style="white-space: pre-wrap;" id="ticketDetailJson">Loading...</pre>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-bold" for="ticketCloseNote">Close note (optional)</label>
+            <textarea class="form-control" id="ticketCloseNote" rows="2" placeholder="What was fixed / why safe?"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-outline-success" id="ticketDetailCloseBtn">
+            <i class="fas fa-check"></i> Close Ticket
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Events -->
+  <div class="card" id="eventsSection">
+    <div class="card-header py-2 d-flex align-items-center justify-content-between">
+      <div class="fw-bold"><i class="fas fa-stream"></i> Sentinel Events</div>
+      <div class="d-flex align-items-center gap-2">
+        <input type="checkbox" class="btn-check" id="filterUnexpectedEvents" autocomplete="off">
+        <label class="btn btn-sm btn-outline-danger" for="filterUnexpectedEvents" title="Show only events with unexpected writes">
+          <i class="fas fa-exclamation-triangle"></i> Unexpected Only
+        </label>
+        <span class="badge bg-secondary">{{ events|length }} loaded</span>
+      </div>
+    </div>
+    <div class="card-body py-2">
+      {% if events %}
+        <div class="accordion" id="sentinelEventsAccordion" style="max-height: 400px; overflow-y: auto;">
+          {% for ev in events %}
+            {% set ev_id = "ev" ~ loop.index %}
+            {% set repos = ev.get("repos", {}) %}
+            {% set fs = ev.get("fs", {}) %}
+            {% set unexpected = fs.get("unexpected", {}) %}
+            {% set in_scope = fs.get("in_scope", {}) %}
+            {% set telemetry = fs.get("telemetry", {}) %}
+            {% set has_unexpected = (unexpected and (unexpected | length) > 0) %}
+
+            <div class="accordion-item" data-has-unexpected="{{ 'true' if has_unexpected else 'false' }}">
+              <h2 class="accordion-header" id="{{ ev_id }}-h">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#{{ ev_id }}-c">
+                  <div class="d-flex flex-wrap gap-3 align-items-center">
+                    <code>{{ ev.get("ts", "unknown") }}</code>
+                    <span class="badge bg-info text-dark">repo changed: {{ (repos.get("changed", []) | length) }}</span>
+                    <span class="badge bg-secondary">in-scope: {{ (in_scope | length) }}</span>
+                    <span class="badge bg-secondary">telemetry: {{ (telemetry | length) }}</span>
+                    {% if unexpected and (unexpected | length) > 0 %}
+                      <span class="badge bg-danger">unexpected: {{ (unexpected | length) }}</span>
+                    {% else %}
+                      <span class="badge bg-success">unexpected: 0</span>
+                    {% endif %}
+                  </div>
+                </button>
+              </h2>
+              <div id="{{ ev_id }}-c" class="accordion-collapse collapse" data-bs-parent="#sentinelEventsAccordion">
+                <div class="accordion-body">
+                  {% if repos.get("changed") %}
+                    <div class="mb-3">
+                      <div class="fw-bold mb-1">Repo Changes</div>
+                      <ul class="mb-0">
+                        {% for r in repos.get("changed", []) %}
+                          <li><code class="full-path d-none">{{ r }}</code><code class="short-path">{{ r.split('/')[-1] }}</code></li>
+                        {% endfor %}
+                      </ul>
+                    </div>
+                  {% endif %}
+
+                  {% if unexpected and (unexpected | length) > 0 %}
+                    <div class="mb-3">
+                      <div class="fw-bold text-danger mb-1">Unexpected Writes</div>
+                      <ul class="mb-0">
+                        {% for root, item in unexpected.items() %}
+                          <li>
+                            <code class="short-path">{{ item.get("label", "unexpected") }}</code>
+                            <code class="full-path d-none">{{ root }}</code>
+                            {% if item.get("files") %}
+                              <ul>
+                                {% for f in item.get("files")[:6] %}
+                                  <li><code class="short-path">{{ f.get("path","").split('/')[-1] }}</code><code class="full-path d-none">{{ f.get("path") }}</code></li>
+                                {% endfor %}
+                              </ul>
+                            {% endif %}
+                          </li>
+                        {% endfor %}
+                      </ul>
+                    </div>
+                  {% endif %}
+
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <div class="fw-bold mb-1">In-Scope Writes (labels)</div>
+                      <ul class="mb-0">
+                        {% for root, item in in_scope.items() %}
+                          <li>
+                            <code class="short-path">{{ item.get("label", "in_scope") }}</code>
+                            <code class="full-path d-none">{{ root }}</code>
+                          </li>
+                        {% endfor %}
+                      </ul>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="fw-bold mb-1">Telemetry Writes (labels)</div>
+                      <ul class="mb-0">
+                        {% for root, item in telemetry.items() %}
+                          <li>
+                            <code class="short-path">{{ item.get("label", "telemetry") }}</code>
+                            <code class="full-path d-none">{{ root }}</code>
+                          </li>
+                        {% endfor %}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="text-muted">No sentinel events found.</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  (function() {
+    // DOM Elements
+    const refreshBtn = document.getElementById('refreshBtn');
+    const toggleBtn = document.getElementById('togglePathsBtn');
+    const ingestBtn = document.getElementById('ingestLatestBtn');
+    const startBtn = document.getElementById('startSentinelBtn');
+    const stopBtn = document.getElementById('stopSentinelBtn');
+    const runOnceBtn = document.getElementById('runOnceBtn');
+    const ticketLatestDetectionBtn = document.getElementById('ticketLatestDetectionBtn');
+
+    // Filter elements
+    const filterHighTickets = document.getElementById('filterHighTickets');
+    const filterMedTickets = document.getElementById('filterMedTickets');
+    const filterDangerDetections = document.getElementById('filterDangerDetections');
+    const filterNonSelfDetections = document.getElementById('filterNonSelfDetections');
+    const filterDetectionDomain = document.getElementById('filterDetectionDomain');
+    const filterUnexpectedEvents = document.getElementById('filterUnexpectedEvents');
+    const filterAntigentRole = document.getElementById('filterAntigentRole');
+
+    // State
+    let showPaths = false;
+
+    // Utility: show loading state on button
+    function setLoading(btn, loading) {
+      if (!btn) return;
+      if (loading) {
+        btn.dataset.originalHtml = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        btn.disabled = true;
+      } else {
+        btn.innerHTML = btn.dataset.originalHtml || btn.innerHTML;
+        btn.disabled = false;
+      }
+    }
+
+    // Utility: show toast notification
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer') || createToastContainer();
+      const toast = document.createElement('div');
+      toast.className = `alert alert-${type} alert-dismissible fade show py-2 px-3`;
+      toast.innerHTML = `${message}<button type="button" class="btn-close btn-sm" data-bs-dismiss="alert"></button>`;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 4000);
+    }
+
+    function createToastContainer() {
+      const container = document.createElement('div');
+      container.id = 'toastContainer';
+      container.style.cssText = 'position:fixed;top:10px;right:10px;z-index:9999;max-width:350px;';
+      document.body.appendChild(container);
+      return container;
+    }
+
+    // Toggle full paths
+    function setPathsVisible(visible) {
+      document.querySelectorAll('.full-path').forEach(el => el.classList.toggle('d-none', !visible));
+      document.querySelectorAll('.short-path').forEach(el => el.classList.toggle('d-none', visible));
+    }
+
+    toggleBtn?.addEventListener('click', () => {
+      showPaths = !showPaths;
+      setPathsVisible(showPaths);
+      toggleBtn.classList.toggle('active', showPaths);
+    });
+
+    // AJAX helpers
+    async function postJson(url, body) {
+      const resp = await fetch(url, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(body || {})
+      });
+      const data = await resp.json().catch(() => ({message: 'Invalid JSON response'}));
+      return {resp, data};
+    }
+
+    // ============================================================
+    // REFRESH BUTTON - Reload page data via AJAX
+    // ============================================================
+    refreshBtn?.addEventListener('click', async () => {
+      setLoading(refreshBtn, true);
+      try {
+        // For now, a simple page reload. Future: partial AJAX updates.
+        window.location.reload();
+      } catch (e) {
+        showToast('Refresh failed: ' + e.message, 'danger');
+      } finally {
+        setLoading(refreshBtn, false);
+      }
+    });
+
+    // ============================================================
+    // SENTINEL CONTROLS
+    // ============================================================
+    startBtn?.addEventListener('click', async () => {
+      setLoading(startBtn, true);
+      try {
+        const {resp, data} = await postJson('/api/sentinel/start', {});
+        if (!resp.ok) {
+          showToast(data.message || 'Failed to start sentinel.', 'danger');
+        } else {
+          showToast('Sentinel started.', 'success');
+          setTimeout(() => window.location.reload(), 1000);
+        }
+      } catch (e) {
+        showToast('Failed to start sentinel.', 'danger');
+      } finally {
+        setLoading(startBtn, false);
+      }
+    });
+
+    stopBtn?.addEventListener('click', async () => {
+      setLoading(stopBtn, true);
+      try {
+        const {resp, data} = await postJson('/api/sentinel/stop', {});
+        if (!resp.ok) {
+          showToast(data.message || 'Failed to stop sentinel.', 'danger');
+        } else {
+          showToast('Sentinel stopped.', 'success');
+          setTimeout(() => window.location.reload(), 1000);
+        }
+      } catch (e) {
+        showToast('Failed to stop sentinel.', 'danger');
+      } finally {
+        setLoading(stopBtn, false);
+      }
+    });
+
+    runOnceBtn?.addEventListener('click', async () => {
+      setLoading(runOnceBtn, true);
+      try {
+        const {resp, data} = await postJson('/api/sentinel/run_once', {});
+        if (!resp.ok) {
+          showToast(data.message || 'Run-once failed.', 'danger');
+        } else {
+          showToast(data.message || 'Watcher ran successfully.', 'success');
+          setTimeout(() => window.location.reload(), 1500);
+        }
+      } catch (e) {
+        showToast('Run-once failed.', 'danger');
+      } finally {
+        setLoading(runOnceBtn, false);
+      }
+    });
+
+    // ============================================================
+    // TICKET INGESTION
+    // ============================================================
+    ingestBtn?.addEventListener('click', async () => {
+      setLoading(ingestBtn, true);
+      try {
+        const {resp, data} = await postJson('/api/tickets/ingest_sentinel', {});
+        if (!resp.ok) {
+          showToast(data.message || 'Failed to ingest sentinel event.', 'warning');
+        } else {
+          const ids = data.created_ticket_ids || [];
+          showToast(ids.length ? `Created ticket(s): #${ids.join(', #')}` : 'No new tickets created.', ids.length ? 'success' : 'info');
+          if (ids.length) setTimeout(() => window.location.reload(), 1000);
+        }
+      } catch (e) {
+        showToast('Failed to ingest sentinel event.', 'danger');
+      } finally {
+        setLoading(ingestBtn, false);
+      }
+    });
+
+    ticketLatestDetectionBtn?.addEventListener('click', async () => {
+      setLoading(ticketLatestDetectionBtn, true);
+      try {
+        const {resp, data} = await postJson('/api/tickets/ingest_detection', {});
+        if (!resp.ok) {
+          showToast(data.message || 'No ticketable detection.', 'warning');
+        } else {
+          const id = data.created_ticket_id;
+          showToast(id ? `Created ticket #${id}` : 'No new ticket created.', id ? 'success' : 'info');
+          if (id) setTimeout(() => window.location.reload(), 1000);
+        }
+      } catch (e) {
+        showToast('Failed to ticket detection.', 'danger');
+      } finally {
+        setLoading(ticketLatestDetectionBtn, false);
+      }
+    });
+
+    // ============================================================
+    // FILTERS - Tickets
+    // ============================================================
+    function applyTicketFilters() {
+      const showHigh = filterHighTickets?.checked;
+      const showMed = filterMedTickets?.checked;
+      const noFilter = !showHigh && !showMed;
+
+      document.querySelectorAll('#ticketsTable tbody tr').forEach(row => {
+        const severity = row.dataset.severity;
+        const show = noFilter || (showHigh && severity === 'high') || (showMed && severity === 'med');
+        row.style.display = show ? '' : 'none';
+      });
+    }
+
+    filterHighTickets?.addEventListener('change', applyTicketFilters);
+    filterMedTickets?.addEventListener('change', applyTicketFilters);
+
+    // ============================================================
+    // FILTERS - Detections
+    // ============================================================
+    function applyDetectionFilters() {
+      const showDanger = filterDangerDetections?.checked;
+      const showNonSelf = filterNonSelfDetections?.checked;
+      const domainFilter = filterDetectionDomain?.value || '';
+      const noResultFilter = !showDanger && !showNonSelf;
+
+      document.querySelectorAll('#detectionsTable tbody tr').forEach(row => {
+        const result = row.dataset.result;
+        const domain = row.dataset.domain;
+        const resultMatch = noResultFilter || (showDanger && result === 'danger') || (showNonSelf && result === 'non_self');
+        const domainMatch = !domainFilter || domain === domainFilter;
+        row.style.display = (resultMatch && domainMatch) ? '' : 'none';
+      });
+    }
+
+    filterDangerDetections?.addEventListener('change', applyDetectionFilters);
+    filterNonSelfDetections?.addEventListener('change', applyDetectionFilters);
+    filterDetectionDomain?.addEventListener('change', applyDetectionFilters);
+
+    // ============================================================
+    // FILTERS - Events (unexpected only)
+    // ============================================================
+    function applyEventFilters() {
+      const unexpectedOnly = filterUnexpectedEvents?.checked;
+
+      document.querySelectorAll('#sentinelEventsAccordion .accordion-item').forEach(item => {
+        const hasUnexpected = item.dataset.hasUnexpected === 'true';
+        item.style.display = (!unexpectedOnly || hasUnexpected) ? '' : 'none';
+      });
+    }
+
+    filterUnexpectedEvents?.addEventListener('change', applyEventFilters);
+
+    // ============================================================
+    // FILTERS - Antigent Events
+    // ============================================================
+    function applyAntigentFilters() {
+      const roleFilter = filterAntigentRole?.value || '';
+
+      document.querySelectorAll('#antigentEventsTable tbody tr').forEach(row => {
+        const role = row.dataset.role;
+        const show = !roleFilter || role === roleFilter;
+        row.style.display = show ? '' : 'none';
+      });
+    }
+
+    filterAntigentRole?.addEventListener('change', applyAntigentFilters);
+
+    // ============================================================
+    // TICKET CLOSE (inline buttons)
+    // ============================================================
+    document.querySelectorAll('.closeTicketBtn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = btn.getAttribute('data-ticket-id');
+        setLoading(btn, true);
+        try {
+          const {resp, data} = await postJson(`/api/tickets/${id}/close`, {note: 'Closed from Sentinel Ops UI'});
+          if (resp.ok) {
+            showToast(`Ticket #${id} closed.`, 'success');
+            btn.closest('tr')?.remove();
+          } else {
+            showToast(data.message || 'Failed to close ticket.', 'danger');
+          }
+        } catch (e) {
+          showToast('Failed to close ticket.', 'danger');
+        } finally {
+          setLoading(btn, false);
+        }
+      });
+    });
+
+    // ============================================================
+    // TICKET DETAIL MODAL
+    // ============================================================
+    const ticketModalEl = document.getElementById('ticketDetailModal');
+    const ticketModal = ticketModalEl ? new bootstrap.Modal(ticketModalEl) : null;
+    let currentTicketId = null;
+
+    function setBadge(el, value, cls) {
+      if (!el) return;
+      el.className = `badge ${cls || 'bg-secondary'}`;
+      el.textContent = value || '';
+    }
+
+    async function loadTicket(ticketId) {
+      const resp = await fetch(`/api/tickets/${ticketId}`);
+      const data = await resp.json();
+      if (!resp.ok) throw new Error(data.message || 'Failed to load ticket');
+      return data.ticket;
+    }
+
+    document.querySelectorAll('.viewTicketBtn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = btn.getAttribute('data-ticket-id');
+        currentTicketId = id;
+        document.getElementById('ticketDetailId').textContent = `#${id}`;
+        document.getElementById('ticketDetailJson').textContent = 'Loading...';
+        document.getElementById('ticketCloseNote').value = '';
+        ticketModal?.show();
+        try {
+          const t = await loadTicket(id);
+          setBadge(document.getElementById('ticketDetailStatus'), t.status, t.status === 'open' ? 'bg-warning text-dark' : 'bg-success');
+          setBadge(document.getElementById('ticketDetailSeverity'), t.severity, t.severity === 'high' ? 'bg-danger' : (t.severity === 'med' ? 'bg-warning text-dark' : 'bg-secondary'));
+          setBadge(document.getElementById('ticketDetailSource'), t.source, 'bg-info text-dark');
+          document.getElementById('ticketDetailSummary').textContent = t.summary || '';
+          document.getElementById('ticketDetailEventTs').textContent = t.source_event_ts || '';
+
+          let details = {};
+          try {
+            details = JSON.parse(t.details_json || '{}');
+          } catch (e) {
+            details = { _raw: t.details_json };
+          }
+          document.getElementById('ticketDetailJson').textContent = JSON.stringify(details, null, 2);
+        } catch (e) {
+          document.getElementById('ticketDetailJson').textContent = String(e);
+        }
+      });
+    });
+
+    document.getElementById('ticketDetailCloseBtn')?.addEventListener('click', async () => {
+      if (!currentTicketId) return;
+      const note = document.getElementById('ticketCloseNote').value || '';
+      const btn = document.getElementById('ticketDetailCloseBtn');
+      setLoading(btn, true);
+      try {
+        const {resp, data} = await postJson(`/api/tickets/${currentTicketId}/close`, {note});
+        if (!resp.ok) throw new Error(data.message || 'Failed to close ticket');
+        showToast(`Ticket #${currentTicketId} closed.`, 'success');
+        ticketModal?.hide();
+        setTimeout(() => window.location.reload(), 800);
+      } catch (e) {
+        showToast(String(e), 'danger');
+      } finally {
+        setLoading(btn, false);
+      }
+    });
+
+  })();
+</script>
+{% endblock %}

@@ -1,0 +1,49 @@
+cell membrane
+plasma membrane
+cytoplasm
+cytoskeleton
+nucleus
+nuclear envelope
+nucleolus
+chromatin
+chromosome
+mitochondria
+endoplasmic reticulum
+rough ER
+smooth ER
+Golgi apparatus
+lysosome
+peroxisome
+ribosome
+centrosome
+centriole
+microtubule
+actin filament
+intermediate filament
+tight junction
+gap junction
+desmosome
+adherens junction
+receptor
+channel
+transporter
+pump
+vesicle
+endocytosis
+exocytosis
+phagocytosis
+pinocytosis
+autophagy
+apoptosis
+necrosis
+cell cycle
+interphase
+mitosis
+meiosis
+cytokinesis
+stem cell
+progenitor cell
+differentiation
+pluripotent
+totipotent
+multipotent

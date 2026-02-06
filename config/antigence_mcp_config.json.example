@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "antigence": {
+      "command": "python3",
+      "args": [
+        "/path/to/antigence/src/immunos_mcp/servers/simple_mcp_server.py"
+      ],
+      "cwd": "/path/to/antigence",
+      "env": {
+        "PYTHONPATH": "/path/to/antigence/src"
+      },
+      "description": "Antigence IMMUNOS security scanner - B Cell pattern matching, NK Cell anomaly detection, multi-agent analysis"
+    }
+  }
+}

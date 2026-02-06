@@ -1,0 +1,63 @@
+{
+  "version": "1.0",
+  "templates": [
+    {
+      "id": "bcell_standard",
+      "name": "B Cell - Pattern Memory",
+      "role": "bcell",
+      "domain": "generic",
+      "description": "Pattern memory with affinity maturation.",
+      "defaults": {
+        "affinity_threshold": 0.7,
+        "max_patterns": 5000
+      }
+    },
+    {
+      "id": "nk_cell_standard",
+      "name": "NK Cell - Negative Selection",
+      "role": "nk_cell",
+      "domain": "generic",
+      "description": "Negative selection with detector generation.",
+      "defaults": {
+        "detector_count": 256,
+        "self_tolerance": 0.85
+      }
+    },
+    {
+      "id": "dendritic_standard",
+      "name": "Dendritic - Feature Extraction",
+      "role": "dendritic",
+      "domain": "generic",
+      "description": "Feature extraction and signal weighting.",
+      "defaults": {
+        "signal_weights": {
+          "danger": 0.6,
+          "safe": 0.3,
+          "context": 0.1
+        }
+      }
+    },
+    {
+      "id": "memory_standard",
+      "name": "Memory - Recall Store",
+      "role": "memory",
+      "domain": "generic",
+      "description": "Persistent recall of validated patterns.",
+      "defaults": {
+        "retention_days": 90,
+        "max_items": 2000
+      }
+    },
+    {
+      "id": "issues_sentinel",
+      "name": "Issues Sentinel",
+      "role": "sentinel",
+      "domain": "immunos",
+      "description": "Tracks and prioritizes open issues and anomalies.",
+      "defaults": {
+        "priority_focus": ["high", "critical"],
+        "update_interval_minutes": 30
+      }
+    }
+  ]
+}
