@@ -170,6 +170,29 @@ antigence scan -f /path/to/code.js
 
 See `docs/training.md` for training commands and dataset guidance.
 
+## Public Data Sources
+
+Antigence ships **no proprietary or user-derived data**. Public datasets can be
+downloaded via the scripts below; each script documents its sources and URLs:
+
+```bash
+python scripts/download_datasets.py
+python scripts/download_extra_datasets.py
+python scripts/download_research_datasets.py
+python scripts/download_sard_juliet.py
+```
+
+If you do not need training data, you can skip these downloads.
+
+## Privacy and Data Handling
+
+- **User data stays local**: Antigence is designed for local-first analysis.
+- **No telemetry by default**: There is no built-in data upload.
+- **Training artifacts are excluded**: Local models, logs, and checkpoints are
+  ignored by `.gitignore` and should never be committed.
+- **Use templates**: Copy `config/antigence_mcp_config.json.example` to
+  `config/antigence_mcp_config.json` and fill in local paths.
+
 ## Applications
 
 ### 1. Self/Non-Self Code Security
