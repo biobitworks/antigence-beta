@@ -5,10 +5,9 @@ Manages cryptographic keys for signing and verification.
 Supports file-based and (future) hardware key storage.
 """
 
-import os
 import json
 from pathlib import Path
-from typing import Optional, Dict, Any
+from typing import Optional, Dict
 from dataclasses import dataclass, asdict
 import time
 

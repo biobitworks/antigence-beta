@@ -4,7 +4,7 @@ Based on Paper weights: EEG: 0.28, ECG: 0.26, RESP: 0.25, GSR: 0.14, TEMP: 0.07
 """
 
 import numpy as np
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 
 class ModalityFusion:
     def __init__(self, weights: Optional[Dict[str, float]] = None):
@@ -34,7 +34,7 @@ class ModalityFusion:
                 # Paper: "modality biasing prior to feature fusion"
                 biased_vec = feature_vec * self.weights[modality]
                 fused.append(biased_vec)
-        
+
         return np.concatenate(fused) if fused else np.array([])
 
 class LLMModalityFusion(ModalityFusion):

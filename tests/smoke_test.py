@@ -126,7 +126,7 @@ def get_embedding(text: str, model: str = "nomic-embed-text") -> list:
         )
         if resp.status_code == 200:
             return resp.json().get("embedding", [])
-    except:
+    except Exception:
         pass
     return []
 
@@ -160,7 +160,7 @@ def load_patterns(model_file: str) -> list:
     return data.get("patterns", data.get("self_patterns", []))
 
 
-def test_bcell(code: str, patterns: list, threshold: float = 0.7) -> dict:
+def run_bcell_check(code: str, patterns: list, threshold: float = 0.7) -> dict:
     """Test code against B Cell patterns."""
     if not patterns:
         return {"error": "No patterns loaded"}
@@ -204,7 +204,7 @@ def test_bcell(code: str, patterns: list, threshold: float = 0.7) -> dict:
     }
 
 
-def test_nkcell(text: str, self_patterns: list, threshold: float = 0.6) -> dict:
+def run_nkcell_check(text: str, self_patterns: list, threshold: float = 0.6) -> dict:
     """Test text against NK Cell self-patterns (negative selection)."""
     if not self_patterns:
         return {"error": "No self-patterns loaded"}
@@ -259,7 +259,7 @@ def run_smoke_test():
     bcell_total = 0
 
     for sample in VULNERABLE_SAMPLES:
-        result = test_bcell(sample["code"], bcell_patterns)
+        result = run_bcell_check(sample["code"], bcell_patterns)
         correct = result.get("prediction") == sample["expected"]
         bcell_correct += int(correct)
         bcell_total += 1
@@ -277,7 +277,7 @@ def run_smoke_test():
     print("-" * 60)
 
     for sample in SAFE_SAMPLES:
-        result = test_bcell(sample["code"], bcell_patterns)
+        result = run_bcell_check(sample["code"], bcell_patterns)
         correct = result.get("prediction") == sample["expected"]
         bcell_correct += int(correct)
         bcell_total += 1
@@ -298,7 +298,7 @@ def run_smoke_test():
 
     if nkcell_patterns:
         for sample in HALLUCINATION_SAMPLES:
-            result = test_nkcell(sample["text"], nkcell_patterns)
+            result = run_nkcell_check(sample["text"], nkcell_patterns)
             correct = result.get("prediction") == sample["expected"]
             nkcell_correct += int(correct)
             nkcell_total += 1

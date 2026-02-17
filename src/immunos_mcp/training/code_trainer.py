@@ -8,7 +8,7 @@ import argparse
 import json
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Tuple, Optional
+from typing import List, Tuple
 
 from ..agents.bcell_agent import BCellAgent
 from ..agents.nk_cell_agent import NKCellAgent

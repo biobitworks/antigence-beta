@@ -14,8 +14,6 @@ from ..agents.bcell_agent import BCellAgent
 from ..agents.nk_cell_agent import NKCellAgent
 from ..config.paths import get_data_root, resolve_data_path
 from ..core.antigen import Antigen
-from ..algorithms.negsel import NegativeSelectionClassifier, NEGSEL_PRESETS
-from ..core.fusion import LLMModalityFusion
 from ..embeddings.simple_text_embedder import SimpleTextEmbedder
 
 

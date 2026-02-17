@@ -1,0 +1,7 @@
+{
+  "generated_at_utc": "2025-12-30T18:53:00.853277Z",
+  "name": "templates",
+  "notes": "Samples: 404.html, 500.html, algorithms.html, base.html, ...",
+  "path": "immunos-mcp/web_app/templates",
+  "summary": "Purpose: Holds templates resources within web app; examples: 404.html, 500.html, algorithms.html, base.html, ... Path: `immunos-mcp/web_app/templates` Contents: 404.html, 500.html, algorithms.html, base.html, ..."
+}

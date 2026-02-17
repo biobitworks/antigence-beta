@@ -10,7 +10,7 @@ Supports three-tier configuration:
 import os
 import yaml
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import Dict, Any
 from ..config.validator import validate_config
 
 
@@ -76,10 +76,10 @@ def expand_path(path: str) -> Path:
 def load_user_config() -> Dict[str, Any]:
     """Load user configuration from ~/.immunos-mcp/config.yaml"""
     config_path = expand_path("~/.immunos-mcp/config.yaml")
-    
+
     if not config_path.exists():
         return {}
-    
+
     try:
         with open(config_path, "r") as f:
             user_config = yaml.safe_load(f) or {}
@@ -92,11 +92,11 @@ def load_user_config() -> Dict[str, Any]:
 def load_env_overrides() -> Dict[str, Any]:
     """Load configuration overrides from environment variables."""
     overrides = {}
-    
+
     # Mode
     if os.getenv("IMMUNOS_MODE"):
         overrides["mode"] = os.getenv("IMMUNOS_MODE")
-    
+
     # Orchestrator remote endpoint
     if os.getenv("IMMUNOS_ORCHESTRATOR_ENDPOINT"):
         if "orchestrator" not in overrides:
@@ -104,7 +104,7 @@ def load_env_overrides() -> Dict[str, Any]:
         if "remote" not in overrides["orchestrator"]:
             overrides["orchestrator"]["remote"] = {}
         overrides["orchestrator"]["remote"]["endpoint"] = os.getenv("IMMUNOS_ORCHESTRATOR_ENDPOINT")
-    
+
     # Orchestrator API key
     if os.getenv("IMMUNOS_ORCHESTRATOR_API_KEY"):
         if "orchestrator" not in overrides:
@@ -112,38 +112,38 @@ def load_env_overrides() -> Dict[str, Any]:
         if "remote" not in overrides["orchestrator"]:
             overrides["orchestrator"]["remote"] = {}
         overrides["orchestrator"]["remote"]["api_key"] = os.getenv("IMMUNOS_ORCHESTRATOR_API_KEY")
-    
+
     # LLM provider
     if os.getenv("IMMUNOS_LLM_PROVIDER"):
         if "llm" not in overrides:
             overrides["llm"] = {}
         overrides["llm"]["provider"] = os.getenv("IMMUNOS_LLM_PROVIDER")
-    
+
     # LLM base URL
     if os.getenv("IMMUNOS_LLM_BASE_URL"):
         if "llm" not in overrides:
             overrides["llm"] = {}
         overrides["llm"]["base_url"] = os.getenv("IMMUNOS_LLM_BASE_URL")
-    
+
     # Logging level
     if os.getenv("IMMUNOS_LOG_LEVEL"):
         if "logging" not in overrides:
             overrides["logging"] = {}
         overrides["logging"]["level"] = os.getenv("IMMUNOS_LOG_LEVEL")
-    
+
     return overrides
 
 
 def deep_merge(base: Dict[str, Any], override: Dict[str, Any]) -> Dict[str, Any]:
     """Deep merge two dictionaries."""
     result = base.copy()
-    
+
     for key, value in override.items():
         if key in result and isinstance(result[key], dict) and isinstance(value, dict):
             result[key] = deep_merge(result[key], value)
         else:
             result[key] = value
-    
+
     return result
 
 
@@ -156,15 +156,15 @@ def load_config() -> Dict[str, Any]:
     """
     # Start with defaults
     config = DEFAULT_CONFIG.copy()
-    
+
     # Merge user config
     user_config = load_user_config()
     config = deep_merge(config, user_config)
-    
+
     # Apply environment overrides
     env_overrides = load_env_overrides()
     config = deep_merge(config, env_overrides)
-    
+
     # Expand paths
     if "orchestrator" in config and "local" in config["orchestrator"]:
         local = config["orchestrator"]["local"]
@@ -172,17 +172,17 @@ def load_config() -> Dict[str, Any]:
             local["models_path"] = str(expand_path(local["models_path"]))
         if "state_path" in local:
             local["state_path"] = str(expand_path(local["state_path"]))
-    
+
     if "agents" in config and "memory" in config["agents"]:
         if "path" in config["agents"]["memory"]:
             config["agents"]["memory"]["path"] = str(expand_path(config["agents"]["memory"]["path"]))
-    
+
     if "logging" in config and "file" in config["logging"]:
         config["logging"]["file"] = str(expand_path(config["logging"]["file"]))
-    
+
     # Validate configuration
     validate_config(config)
-    
+
     return config
 
 

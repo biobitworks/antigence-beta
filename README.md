@@ -143,11 +143,11 @@ print(result.confidence)      # 0.7 (example)
 
 ### Command Line Interface
 
-A unified CLI is available at `$HOME/projects/bin/antigence`:
+A unified CLI is available at `$ANTIGENCE_HOME/bin/antigence`:
 
 ```bash
 # Add to PATH (in ~/.zshrc)
-export PATH="$HOME/projects/bin:$PATH"
+export PATH="$ANTIGENCE_HOME/bin:$PATH"
 
 # Show help
 antigence help
@@ -169,37 +169,6 @@ antigence scan -f /path/to/code.js
 ## Training
 
 See `docs/training.md` for training commands and dataset guidance.
-
-## Public Data Sources
-
-Antigence ships **no proprietary or user-derived data**. Public datasets can be
-downloaded via the scripts below; each script documents its sources and URLs:
-
-```bash
-python scripts/download_datasets.py
-python scripts/download_extra_datasets.py
-python scripts/download_research_datasets.py
-python scripts/download_sard_juliet.py
-```
-
-If you do not need training data, you can skip these downloads.
-
-## Privacy and Data Handling
-
-- **User data stays local**: Antigence is designed for local-first analysis.
-- **No telemetry by default**: There is no built-in data upload.
-- **Training artifacts are excluded**: Local models, logs, and checkpoints are
-  ignored by `.gitignore` and should never be committed.
-- **Use templates**: Copy `config/antigence_mcp_config.json.example` to
-  `config/antigence_mcp_config.json` and fill in local paths.
-
-## Enterprise and Commercial
-
-Antigence is open source, with an **open-core** model for enterprise users.
-If you need hosted deployments, SLAs, onboarding, or enterprise features
-(SSO, audit trails, compliance tooling), contact us:
-
-- **Enterprise contact**: enterprise@biobitworks.com
 
 ## Applications
 

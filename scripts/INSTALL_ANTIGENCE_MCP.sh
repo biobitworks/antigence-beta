@@ -8,8 +8,8 @@ echo "║  Installing Antigence MCP Server                          ║"
 echo "╚════════════════════════════════════════════════════════════╝"
 echo ""
 
-ANTIGENCE_PATH="${ANTIGENCE_PATH:-/path/to/antigence}"
-CONFIG_SOURCE="${CONFIG_SOURCE:-/path/to/antigence_mcp_config.json}"
+ANTIGENCE_PATH="${ANTIGENCE_HOME:-$(dirname "$0")/..}"
+CONFIG_SOURCE="${ANTIGENCE_PATH}/antigence_mcp_config.json"
 
 # 1. Install for Claude Code
 echo "1. Installing for Claude Code..."

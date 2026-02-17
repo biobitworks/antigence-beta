@@ -44,7 +44,7 @@ It ensures that the "Negative Selection" layers of the Artificial Immune System 
 ---
 
 ## 🎓 Academic Attribution
-The TRAITS framework is a core innovation of the **Antigence™ Project (v0.2.0-beta)**. It is documented in the preprint manuscript *[Antigence™ (powered by immunOS): SciFact Baseline and Negative-Selection AIS Framing](../../manuscript/PREPRINT_v0.1.0_TIER1.md)* and is intended for attribution in Zenodo and bioRxiv releases.
+The TRAITS framework is a core innovation of the **Antigence™ Project (v0.2.0-alpha)**. It is documented in the preprint manuscript *Antigence™ (powered by immunOS): SciFact Baseline and Negative-Selection AIS Framing* (see `manuscript/` directory) and is intended for attribution in Zenodo and bioRxiv releases.
 
 ## 🚀 Usage in IMMUNOS
 Antigents are evaluated against **TRAITS** standards before being promoted to the active repertoire. The platform uses these "traits" to ensure that the AI immune system remains robust, predictable, and scientifically sound.

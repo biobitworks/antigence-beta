@@ -1,0 +1,7 @@
+{
+  "generated_at_utc": "2025-12-30T18:53:00.853277Z",
+  "name": "security",
+  "notes": "Samples: __init__.py, keystore.py, signer.py, verifier.py",
+  "path": "immunos-mcp/src/immunos_mcp/security",
+  "summary": "Purpose: Holds security resources within immunos mcp; examples: init.py, keystore.py, signer.py, verifier.py. Path: `immunos-mcp/src/immunos_mcp/security` Contents: init.py, keystore.py, signer.py, verifier.py"
+}

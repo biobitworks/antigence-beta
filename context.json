@@ -1,0 +1,22 @@
+{
+  "project": "Antigence Alpha",
+  "version": "0.1.0-alpha",
+  "tier": 1,
+  "milestone": "NegSl-AIS Integration & Recreation",
+  "last_synchronized": "2026-01-05T09:50:00",
+  "status": "LOCKED",
+  "implementation": {
+    "engine": "Rigorous NegSl-AIS (Eq 20)",
+    "biasing": "Paper Weights (EEG=0.28, etc.)",
+    "verification": "Reproduction Script 100% Accuracy",
+    "hallucination_guard": "Citation Detector v1.0",
+    "self_verification": "demo scripts/immunos_audit_verify.py active"
+  },
+  "publication_readiness": {
+    "zenodo": "CITATION.cff / CITATIONS.bib ready",
+    "biorxiv": "PREPRINT_v0.1.0_TIER1.md ready",
+    "data": "Synthetic samples provided in /data"
+  },
+  "signature": "BYRON-TIER1-01052026-AUTH-SIG-0xRECREATION_LOCKED",
+  "summary": "!Antigence Dashboard"
+}

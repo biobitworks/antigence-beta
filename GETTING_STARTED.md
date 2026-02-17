@@ -4,26 +4,7 @@
 
 **Antigence** is a bio-inspired multi-agent security analysis platform using Artificial Immune System (AIS) principles. AI agents play biological immune cell roles to detect vulnerabilities, anomalies, and threats.
 
-**Version**: v0.2.0-beta (January 2026)
-
-## Data Availability (Public-Only)
-
-Antigence **does not** ship proprietary or user-derived data in the public repo.
-Any local training artifacts, user data, or model checkpoints are **excluded**.
-
-Publicly available datasets can be downloaded using the provided scripts:
-
-```bash
-# Core public datasets (optional)
-python scripts/download_datasets.py
-
-# Additional public datasets for training/evaluation (optional)
-python scripts/download_extra_datasets.py
-python scripts/download_research_datasets.py
-python scripts/download_sard_juliet.py
-```
-
-If you do not need training data, you can skip these steps.
+**Version**: v0.2.0-alpha (January 2026)
 
 ---
 
@@ -64,7 +45,7 @@ ollama pull nomic-embed-text
 
 ```bash
 # Add to PATH (one time)
-export PATH="$HOME/projects/bin:$PATH"
+export PATH="$ANTIGENCE_HOME/bin:$PATH"
 
 # Analyze code for vulnerabilities
 antigence analyze 'eval(user_input)'

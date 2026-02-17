@@ -1,0 +1,7 @@
+{
+  "generated_at_utc": "2025-12-30T18:53:00.853277Z",
+  "name": "orchestrator",
+  "notes": "Samples: __init__.py, __pycache__/, interface.py, local.py, ...",
+  "path": "immunos-mcp/src/immunos_mcp/orchestrator",
+  "summary": "Purpose: Holds orchestrator resources within immunos mcp; examples: init.py, pycache/, interface.py, local.py, ... Path: `immunos-mcp/src/immunos_mcp/orchestrator` Contents: init.py, pycache/, interface.py, local.py, ..."
+}

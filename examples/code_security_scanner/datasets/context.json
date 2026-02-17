@@ -1,0 +1,7 @@
+{
+  "generated_at_utc": "2025-12-30T18:53:00.853277Z",
+  "name": "datasets",
+  "notes": "Samples: __init__.py, __pycache__/, safe_patterns.py, vulnerable_patterns.py",
+  "path": "immunos-mcp/examples/code_security_scanner/datasets",
+  "summary": "Purpose: Holds datasets resources within code security scanner; examples: init.py, pycache/, safe_patterns.py, vulnerable_patterns.py. Path: `immunos-mcp/examples/code_security_scanner/datasets` Contents: init.py, pycache/, safe_patterns.py, vulnerable_patterns.py"
+}

@@ -1,0 +1,7 @@
+{
+  "generated_at_utc": "2025-12-30T18:53:00.853277Z",
+  "name": "embeddings",
+  "notes": "Samples: __pycache__/, cached_embedder.py, ollama_embedder.py, simple_text_embedder.py",
+  "path": "immunos-mcp/src/immunos_mcp/embeddings",
+  "summary": "Purpose: Holds embeddings resources within immunos mcp; examples: pycache/, cached_embedder.py, ollama_embedder.py, simple_text_embedder.py. Path: `immunos-mcp/src/immunos_mcp/embeddings` Contents: pycache/, cached_embedder.py, ollama_embedder.py, simple_text_embedder.py"
+}

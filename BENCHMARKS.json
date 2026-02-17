@@ -1,0 +1,67 @@
+{
+  "benchmark_date": "2026-02-16T17:19:18Z",
+  "dataset": "synthetic_code_security",
+  "dataset_description": "20 safe + 20 vulnerable Python code snippets",
+  "results": {
+    "negsel": {
+      "algorithm": "NegSl-AIS",
+      "dataset": "synthetic_code_security",
+      "safe_samples": 20,
+      "vulnerable_samples": 20,
+      "detectors": 30,
+      "r_self": 0.3,
+      "confusion_matrix": {
+        "TP": 7,
+        "TN": 20,
+        "FP": 0,
+        "FN": 13
+      },
+      "accuracy": 0.675,
+      "precision": 1.0,
+      "recall": 0.35,
+      "f1": 0.5185,
+      "mcc": 0.4606,
+      "kappa": 0.35,
+      "false_positive_rate": 0.0,
+      "train_time_s": 0.007
+    },
+    "bcell": {
+      "algorithm": "B-Cell (SHA strategy, traditional affinity)",
+      "dataset": "synthetic_code_security",
+      "train_samples": 28,
+      "test_samples": 12,
+      "confusion_matrix": {
+        "TP": 6,
+        "TN": 1,
+        "FP": 5,
+        "FN": 0
+      },
+      "accuracy": 0.5833,
+      "precision": 0.5455,
+      "recall": 1.0,
+      "f1": 0.7059,
+      "mcc": 0.3015,
+      "train_time_s": 0.0
+    },
+    "nkcell": {
+      "algorithm": "NK Cell (NegSl-AIS feature mode)",
+      "dataset": "synthetic_code_security",
+      "self_samples": 20,
+      "test_samples": 40,
+      "detectors": 20,
+      "confusion_matrix": {
+        "TP": 0,
+        "TN": 20,
+        "FP": 0,
+        "FN": 20
+      },
+      "accuracy": 0.5,
+      "precision": 0,
+      "recall": 0.0,
+      "f1": 0,
+      "mcc": 0.0,
+      "false_positive_rate": 0.0,
+      "train_time_s": 0.002
+    }
+  }
+}

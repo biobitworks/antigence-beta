@@ -10,7 +10,12 @@ from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 
 import numpy as np
-import torch
+
+try:
+    import torch
+    HAS_TORCH = True
+except ImportError:
+    HAS_TORCH = False
 
 
 @dataclass
@@ -164,7 +169,7 @@ class AffinityCalculator:
 
         return AffinityResult(score=float(affinity), method="embedding_cosine")
 
-    def torch_batch_affinity(self, emb1: torch.Tensor, emb2: torch.Tensor) -> torch.Tensor:
+    def torch_batch_affinity(self, emb1: "torch.Tensor", emb2: "torch.Tensor") -> "torch.Tensor":
         """
         Calculate cosine similarity between two batches of embeddings using PyTorch.
         Returns a matrix of scores in [0, 1].

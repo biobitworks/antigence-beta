@@ -14,14 +14,9 @@ Core Concept:
 """
 
 import numpy as np
-import sqlite3
-import pickle
 import os
-from pathlib import Path
-from typing import List, Tuple, Dict, Optional, Union
-from dataclasses import dataclass, field
-from datetime import datetime
-from enum import Enum
+from typing import List, Optional, Union
+from dataclasses import dataclass
 
 # =============================================================================
 # PAPER PRESETS (Table 5 & 6)
@@ -86,16 +81,16 @@ class NegativeSelectionClassifier:
     NegSl-AIS implementation following Umair et al. (2025).
     """
 
-    def __init__(self, config: Union[NegSelConfig, str] = "GENERAL", 
+    def __init__(self, config: Union[NegSelConfig, str] = "GENERAL",
                  class_label: str = "SELF", db_path: str = None):
         if isinstance(config, str):
             self.config = NEGSEL_PRESETS.get(config, NEGSEL_PRESETS["GENERAL"])
         else:
             self.config = config
-            
+
         self.class_label = class_label
-        self.db_path = db_path or os.getenv("IMMUNOS_DB") or os.path.expanduser("~/.immunos/db/immunos.db")
-        
+        self.db_path = db_path or os.getenv("IMMUNOS_DB") or os.path.join(os.path.expanduser("~"), ".immunos", "db", "immunos.db")
+
         self.valid_detectors: List[Detector] = []
         self.feature_dim: int = 0
         self.self_samples: Optional[np.ndarray] = None
@@ -117,23 +112,23 @@ class NegativeSelectionClassifier:
         self.self_samples = np.array(self_samples)
         self.feature_dim = self_samples.shape[1]
         self.valid_detectors = []
-        
+
         attempts = 0
         while len(self.valid_detectors) < self.config.num_detectors and attempts < max_attempts:
             attempts += 1
             # Generate random candidate in unit hypercube [0, 1]
             candidate_center = np.random.uniform(0, 1, self.feature_dim)
-            
+
             r_q = self._get_nearest_self_distance(candidate_center)
-            
+
             # Equation 20: Validation Rule
             if r_q > self.config.r_self:
                 # Equation 21 Calculation of detector radius
                 detector_radius = r_q - self.config.r_self
-                
+
                 # Check for duplicates (distinct detector requirement)
                 is_duplicate = any(np.allclose(d.center, candidate_center, atol=1e-5) for d in self.valid_detectors)
-                
+
                 if not is_duplicate:
                     self.valid_detectors.append(Detector(
                         center=candidate_center,
@@ -152,26 +147,26 @@ class NegativeSelectionClassifier:
         OR
         2. Binds to a detector (Maturation logic handles this)
 
-        Simplified per Section 4.3.4: "detectors that bind with self-samples are discarded... 
+        Simplified per Section 4.3.4: "detectors that bind with self-samples are discarded...
         mature T-cells search for non-self antigens"
         """
         if not self.valid_detectors:
-            return 0.0 
-            
+            return 0.0
+
         r_q = self._get_nearest_self_distance(sample)
-        
+
         # If it's close to self, it's SELF
         if r_q <= self.config.r_self:
             return 0.0
-            
+
         # If it's far from self, check if it binds to our mature detectors
         for d in self.valid_detectors:
             dist = self._euclidean_distance(sample, d.center)
             # If distance to detector is small, it's a confirmed NON-SELF
             if dist < d.radius:
                 return 1.0
-        
-        # If it's far from self but doesn't bind to a specific detector, 
+
+        # If it's far from self but doesn't bind to a specific detector,
         # the paper often still treats it as Non-Self in a binary task
         return 1.0
 

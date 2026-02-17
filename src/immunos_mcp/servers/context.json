@@ -1,0 +1,7 @@
+{
+  "generated_at_utc": "2025-12-30T18:53:00.853277Z",
+  "name": "servers",
+  "notes": "Samples: __init__.py, __pycache__/, simple_mcp_server.py",
+  "path": "immunos-mcp/src/immunos_mcp/servers",
+  "summary": "Purpose: Holds servers resources within immunos mcp; examples: init.py, pycache/, simple_mcp_server.py. Path: `immunos-mcp/src/immunos_mcp/servers` Contents: init.py, pycache/, simple_mcp_server.py"
+}

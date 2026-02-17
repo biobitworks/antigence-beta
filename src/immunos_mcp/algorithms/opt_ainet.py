@@ -260,7 +260,7 @@ class OptAiNet:
         self.initialize_population()
 
         if verbose:
-            print(f"Opt-AiNet Optimization")
+            print("Opt-AiNet Optimization")
             print(f"  Dimensions: {self.dimensions}")
             print(f"  Population: {self.population_size}")
             print(f"  Generations: {self.max_generations}")
@@ -383,7 +383,7 @@ if __name__ == '__main__':
     best_pos, best_fit = optimizer.optimize(verbose=True)
     print(f"\nBest position: {best_pos}")
     print(f"Best fitness: {best_fit:.8f}")
-    print(f"Expected: 0.0 at origin")
+    print("Expected: 0.0 at origin")
 
     print("\n" + "=" * 70)
     print("Opt-AiNet Test: Rastrigin Function (Multi-modal)")

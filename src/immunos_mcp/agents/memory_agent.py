@@ -350,7 +350,7 @@ class MemoryAgent:
 
     def get_statistics(self) -> Dict[str, Any]:
         """Get memory statistics."""
-        current_time = time.time()
+        time.time()
         priorities = {"critical": 0, "high": 0, "medium": 0, "low": 0}
         classes: Dict[str, int] = {}
         total_accesses = 0

@@ -18,7 +18,7 @@ from pathlib import Path
 
 from ..core.antigen import Antigen
 from ..core.affinity import DistanceMetric
-from ..core.protocols import Detector, Pattern, AnomalyResult, AgentResponse
+from ..core.protocols import Pattern, AnomalyResult, AgentResponse
 
 
 class ThresholdMethod(Enum):

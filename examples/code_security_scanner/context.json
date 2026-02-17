@@ -1,0 +1,7 @@
+{
+  "generated_at_utc": "2025-12-30T18:50:24Z",
+  "name": "code_security_scanner",
+  "notes": "",
+  "path": "immunos-mcp/examples/code_security_scanner",
+  "summary": "> Artificial Immune System for Python Code Vulnerability Detection An innovative security scanner that uses biological immune system principles to detect vulnerabilities in Python code. Combines B Cell pattern matching with NK Cell anomaly detection for comprehensive security analysis."
+}

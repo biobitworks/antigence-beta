@@ -102,7 +102,7 @@ For Ollama models, you need to expose Antigence via a different method since the
 
 Create an HTTP API wrapper around the MCP server:
 
-**File**: `/path/to/antigence/scripts/antigence_api.py`
+**File**: `<your-antigence-dir>/scripts/antigence_api.py`
 
 ```python
 #!/usr/bin/env python3
@@ -113,7 +113,8 @@ Exposes IMMUNOS MCP tools via REST API for Ollama agents
 
 from flask import Flask, request, jsonify
 import sys
-sys.path.insert(0, '/path/to/antigence/src')
+import os
+sys.path.insert(0, os.path.join(os.environ.get('ANTIGENCE_HOME', os.path.dirname(__file__) + '/..'), 'src'))
 
 from immunos_mcp.core.antigen import Antigen, DataType
 from immunos_mcp.orchestrator.manager import OrchestratorManager
@@ -176,7 +177,7 @@ if __name__ == '__main__':
 
 **Start the API**:
 ```bash
-python3 /path/to/antigence/scripts/antigence_api.py
+python3 "$ANTIGENCE_HOME/scripts/antigence_api.py"
 ```
 
 **Use from Ollama**:
@@ -196,7 +197,8 @@ When Qwen Coder writes Python scripts, it can directly import IMMUNOS:
 
 ```python
 import sys
-sys.path.insert(0, '/path/to/antigence/src')
+import os
+sys.path.insert(0, os.path.join(os.environ.get('ANTIGENCE_HOME', '.'), 'src'))
 
 from immunos_mcp.core.antigen import Antigen
 from immunos_mcp.orchestrator.manager import OrchestratorManager
@@ -228,13 +230,13 @@ print(f"Anomaly: {result.anomaly}")
 
 Antigence can use the IMMUNOS memory system for persistent context:
 
-**File**: `/path/to/antigence/config/immunos_integration.json`
+**File**: `<your-antigence-dir>/config/immunos_integration.json`
 
 ```json
 {
-  "immunos_base_path": "/path/to/.immunos",
-  "memory_path": "/path/to/.immunos/memory",
-  "snapshots_path": "/path/to/.immunos/memory/snapshots",
+  "immunos_base_path": "~/.immunos",
+  "memory_path": "~/.immunos/memory",
+  "snapshots_path": "~/.immunos/memory/snapshots",
   "enable_context_persistence": true,
   "enable_agent_logging": true
 }
@@ -247,7 +249,7 @@ Antigence can use the IMMUNOS memory system for persistent context:
 import json
 from pathlib import Path
 
-immunos_config = Path('/path/to/antigence/config/immunos_integration.json')
+immunos_config = Path(__file__).parent.parent / 'config' / 'immunos_integration.json'
 if immunos_config.exists():
     with open(immunos_config) as f:
         immunos_settings = json.load(f)
@@ -298,7 +300,7 @@ Update agent startup scripts to include Antigence:
 # Qwen Coder with Antigence API
 
 echo "🧬 Starting Antigence API server..."
-python3 /path/to/antigence/scripts/antigence_api.py &
+python3 "$ANTIGENCE_HOME/scripts/antigence_api.py" &
 ANTIGENCE_PID=$!
 
 echo "Starting Qwen Coder..."

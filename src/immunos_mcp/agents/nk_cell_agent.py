@@ -5,7 +5,7 @@ Anomaly detection agent using Negative Selection Algorithm.
 Inspired by Natural Killer cells and T-cell negative selection in the thymus.
 """
 
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 import time
 import numpy as np
 import random
@@ -15,7 +15,7 @@ from pathlib import Path
 from ..core.antigen import Antigen
 from ..core.affinity import AffinityCalculator, DistanceMetric
 from ..core.protocols import Detector, Pattern, AnomalyResult, AgentResponse
-from ..algorithms.negsel import NegativeSelectionClassifier, NEGSEL_PRESETS, NegSelConfig
+from ..algorithms.negsel import NegativeSelectionClassifier, NEGSEL_PRESETS
 
 
 class NKCellAgent:
@@ -39,12 +39,12 @@ class NKCellAgent:
         self.detectors: List[Detector] = []  # Negative selection detectors
         self.affinity_calculator = AffinityCalculator(method="hybrid")
         self.embedding_cache: Dict[str, np.ndarray] = {}
-        
+
         # NegSl-AIS Core Engine (Eq 20)
         self.negsel_config_key = negsel_config
         config = NEGSEL_PRESETS.get(negsel_config, NEGSEL_PRESETS["GENERAL"])
         self.core_classifier = NegativeSelectionClassifier(config=config)
-        
+
         # Feature-based mode storage
         self.feature_vectors: List[np.ndarray] = []  # Self feature vectors
         self.detector_vectors: List[np.ndarray] = []  # Detector feature vectors
@@ -125,14 +125,14 @@ class NKCellAgent:
         """
         start_time = time.time()
         fv = np.array(feature_vector)
-        
+
         # Ensure engine is primed
         if self.core_classifier.self_samples is None and self.feature_vectors:
             self.core_classifier.self_samples = np.array(self.feature_vectors)
 
         is_non_self = self.core_classifier.predict_single(fv)
         anomaly_score = float(self.core_classifier.get_anomaly_score(fv))
-        
+
         # Legacy compatibility for similarity scores
         min_self_distance = float(self.core_classifier._get_nearest_self_distance(fv))
         max_distance = np.sqrt(self.feature_dim)
@@ -171,7 +171,7 @@ class NKCellAgent:
                                       detector_matches: List[str]) -> str:
         """Generate explanation for feature-based detection."""
         if is_anomaly:
-            return f"Anomaly detected (NegSl-AIS): Low similarity to Self patterns."
+            return "Anomaly detected (NegSl-AIS): Low similarity to Self patterns."
         return f"Normal pattern: High feature similarity to self ({self_sim:.3f})"
 
     def _generate_detectors(self):
@@ -183,7 +183,7 @@ class NKCellAgent:
 
         detectors_generated = 0
         attempts = 0
-        max_attempts = self.num_detectors * 10 
+        max_attempts = self.num_detectors * 10
 
         while detectors_generated < self.num_detectors and attempts < max_attempts:
             attempts += 1
@@ -219,7 +219,7 @@ class NKCellAgent:
             # Reconstruct vector for detect_with_features
             vec = [float(v) for v in antigen.features.values()] if isinstance(antigen.features, dict) else list(antigen.features)
             return self.detect_with_features(antigen, vec)
-            
+
         start_time = time.time()
         max_self_similarity = 0.0
         for pattern in self.self_patterns:

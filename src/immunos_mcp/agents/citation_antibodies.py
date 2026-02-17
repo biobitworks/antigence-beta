@@ -12,7 +12,7 @@ import re
 import pickle
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple, Any
+from typing import Dict, List, Optional, Any
 import numpy as np
 
 from ..algorithms.negsel import NegativeSelectionClassifier, NegSelConfig
@@ -332,7 +332,7 @@ class PMIDAntibody(BaseAntibody):
             component="PMID",
             is_anomaly=False,
             confidence=0.85,
-            reason=f"Valid PMID range"
+            reason="Valid PMID range"
         )
 
     def check_temporal_consistency(self, pmid: str, year: int) -> AntibodyResult:

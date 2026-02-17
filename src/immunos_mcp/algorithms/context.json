@@ -1,0 +1,7 @@
+{
+  "generated_at_utc": "2025-12-30T18:53:00.853277Z",
+  "name": "algorithms",
+  "notes": "Samples: __init__.py, negsel.py, opt_ainet.py, qml_ainet.py",
+  "path": "immunos-mcp/src/immunos_mcp/algorithms",
+  "summary": "Purpose: Holds algorithms resources within immunos mcp; examples: init.py, negsel.py, opt_ainet.py, qml_ainet.py. Path: `immunos-mcp/src/immunos_mcp/algorithms` Contents: init.py, negsel.py, opt_ainet.py, qml_ainet.py"
+}

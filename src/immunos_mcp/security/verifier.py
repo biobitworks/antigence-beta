@@ -8,16 +8,14 @@ Ensures integrity and detects tampering.
 import json
 import hashlib
 import base64
-import time
 from pathlib import Path
-from typing import Dict, Any, Optional, Tuple
+from typing import Dict, Any, Optional
 from dataclasses import dataclass
 
 from .signer import SignatureManifest, HAS_CRYPTOGRAPHY
 
 if HAS_CRYPTOGRAPHY:
     from cryptography.hazmat.primitives import serialization
-    from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
     from cryptography.exceptions import InvalidSignature
 
 
@@ -204,7 +202,7 @@ class SecureVerifier:
                 domain=manifest.domain,
                 signed_at=manifest.signed_at,
                 signed_by=manifest.signed_by,
-                error=f"Hash mismatch - file may be tampered"
+                error="Hash mismatch - file may be tampered"
             )
 
         # Verify signature

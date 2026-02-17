@@ -8,10 +8,15 @@ Learns specific patterns and calculates affinity to new antigens.
 import json
 import time
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
 import numpy as np
-import torch
+
+try:
+    import torch
+    HAS_TORCH = True
+except ImportError:
+    HAS_TORCH = False
 
 from ..core.affinity import AffinityCalculator
 from ..core.antigen import Antigen

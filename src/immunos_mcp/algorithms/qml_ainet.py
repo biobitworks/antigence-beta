@@ -12,11 +12,10 @@ Key differences from Opt-AiNet:
 4. Application to qualitative differential equation learning
 """
 
-from typing import List, Dict, Any, Callable, Tuple, Optional
+from typing import List, Dict, Any, Optional
 from dataclasses import dataclass, field
 from enum import Enum
 import numpy as np
-import time
 import sys
 from pathlib import Path
 
@@ -96,7 +95,7 @@ class QDEModel:
     def __str__(self):
         lines = ["QDE Model:"]
         lines.append(f"  Variables: {', '.join(self.variables)}")
-        lines.append(f"  Constraints:")
+        lines.append("  Constraints:")
         for c in self.constraints:
             lines.append(f"    - {c}")
         lines.append(f"  Fitness: {self.fitness:.4f}")

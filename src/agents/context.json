@@ -1,0 +1,7 @@
+{
+  "generated_at_utc": "2025-12-30T18:53:00.853277Z",
+  "name": "agents",
+  "notes": "Samples: __pycache__/",
+  "path": "immunos-mcp/src/agents",
+  "summary": "Purpose: Holds agents resources within src; examples: pycache/. Path: `immunos-mcp/src/agents` Contents: pycache/"
+}

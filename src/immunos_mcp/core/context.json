@@ -1,0 +1,7 @@
+{
+  "generated_at_utc": "2025-12-30T18:53:00.853277Z",
+  "name": "core",
+  "notes": "Samples: __init__.py, __pycache__/, affinity.py, antigen.py, ...",
+  "path": "immunos-mcp/src/immunos_mcp/core",
+  "summary": "Purpose: Holds core resources within immunos mcp; examples: init.py, pycache/, affinity.py, antigen.py, ... Path: `immunos-mcp/src/immunos_mcp/core` Contents: init.py, pycache/, affinity.py, antigen.py, ..."
+}

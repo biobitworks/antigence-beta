@@ -1,0 +1,7 @@
+{
+  "generated_at_utc": "2025-12-30T18:53:00.853277Z",
+  "name": "training",
+  "notes": "Samples: __init__.py, __pycache__/, code_trainer.py, emotion_trainer.py, ...",
+  "path": "immunos-mcp/src/immunos_mcp/training",
+  "summary": "Purpose: Holds training resources within immunos mcp; examples: init.py, pycache/, code_trainer.py, emotion_trainer.py, ... Path: `immunos-mcp/src/immunos_mcp/training` Contents: init.py, pycache/, code_trainer.py, emotion_trainer.py, ..."
+}

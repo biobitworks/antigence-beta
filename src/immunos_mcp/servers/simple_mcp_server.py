@@ -36,22 +36,22 @@ class SimpleMCPServer:
 
     def __init__(self):
         self.server = Server("immunos-mcp")
-        
+
         # Load configuration
         self.config = load_config()
-        
+
         # Detect operating mode
         self.mode = detect_mode(self.config)
-        
+
         # Initialize orchestrator manager (handles local/remote selection)
         self.orchestrator_manager = OrchestratorManager(self.config)
-        
+
         # Log initialization
         orchestrator_type = self.orchestrator_manager.get_current_orchestrator().get_mode()
-        print(f"IMMUNOS-MCP Server initialized:", file=sys.stderr)
+        print("IMMUNOS-MCP Server initialized:", file=sys.stderr)
         print(f"  Mode: {self.mode}", file=sys.stderr)
         print(f"  Orchestrator: {orchestrator_type} (thymus)", file=sys.stderr)
-        
+
         self._register_tools()
 
     def _register_tools(self):
@@ -190,9 +190,9 @@ class SimpleMCPServer:
         """Run B Cell pattern matching on code"""
         code = args['code']
         data_type = args.get('data_type', 'auto')
-        
+
         antigen = self._create_antigen(code, data_type)
-        
+
         # Use orchestrator manager (automatically handles local/remote fallback)
         try:
             result = self.orchestrator_manager.analyze(antigen)
@@ -258,9 +258,9 @@ class SimpleMCPServer:
         """Run NK Cell anomaly detection"""
         code = args['code']
         data_type = args.get('data_type', 'auto')
-        
+
         antigen = self._create_antigen(code, data_type)
-        
+
         # Use orchestrator manager (automatically handles local/remote fallback)
         try:
             result = self.orchestrator_manager.analyze(antigen)
@@ -330,9 +330,9 @@ class SimpleMCPServer:
         """Run complete multi-agent analysis"""
         code = args['code']
         data_type = args.get('data_type', 'auto')
-        
+
         antigen = self._create_antigen(code, data_type)
-        
+
         # Use orchestrator manager (automatically handles local/remote fallback)
         try:
             result = self.orchestrator_manager.analyze(antigen)
@@ -368,7 +368,7 @@ class SimpleMCPServer:
             nk_agent = current_orch.orchestrator.nk_cell
             output += f"- **Detectors:** {len(nk_agent.detectors)}\n"
         else:
-            output += f"- **Detectors:** N/A (remote orchestrator)\n"
+            output += "- **Detectors:** N/A (remote orchestrator)\n"
         output += """
 
 #### Dendritic Cell (Feature Extraction)
@@ -423,9 +423,9 @@ class SimpleMCPServer:
         """Extract features using Dendritic Cell agent"""
         code = args['code']
         data_type = args.get('data_type', 'auto')
-        
+
         antigen = self._create_antigen(code, data_type)
-        
+
         # Get current orchestrator for feature extraction
         current_orch = self.orchestrator_manager.get_current_orchestrator()
         if current_orch.get_mode() == "local":
@@ -457,7 +457,7 @@ class SimpleMCPServer:
         danger = signals.get('danger', 0)
         pamp = signals.get('pamp', 0)
         safe = signals.get('safe', 0)
-        
+
         if danger > 0.7:
             output += "- **Danger Signal:** 🔴 High - Complex or potentially risky content\n"
         elif danger > 0.3:
@@ -483,7 +483,7 @@ class SimpleMCPServer:
         """Query or manage memory agent"""
         code = args['code']
         action = args.get('action', 'check')
-        
+
         if action == 'clear':
             current_orch = self.orchestrator_manager.get_current_orchestrator()
             if current_orch.get_mode() == "local":
@@ -507,7 +507,7 @@ All stored patterns and analysis results have been removed.
         # Check memory
         antigen = self._create_antigen(code, 'auto')
         memory_key = antigen.identifier or str(hash(antigen.get_text_content()))
-        
+
         # Get memory from current orchestrator
         current_orch = self.orchestrator_manager.get_current_orchestrator()
         if current_orch.get_mode() == "local":

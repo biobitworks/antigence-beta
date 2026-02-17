@@ -1,7 +1,7 @@
 # Antigence Alpha Essentials
 
 This checklist enumerates the minimal, security-conscious release set for Antigence Alpha and the
-canonical sources in the project workspace.
+canonical sources inside `<workspace>` (e.g., your local projects directory).
 
 ## Must-Have (Alpha Release)
 

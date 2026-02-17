@@ -1,14 +1,14 @@
 # Private files
-context.json
-blog/
-web_app/data/immunos.db
-web_app/.immunos/
-data/immunos_data/
-runs/
+antigence-alpha/context.json
+antigence-alpha/blog/
+antigence-alpha/web_app/data/immunos.db
+antigence-alpha/web_app/.immunos/
+antigence-alpha/data/immunos_data/
+antigence-alpha/runs/
 .DS_Store
 
 # Publication Build Artifacts
-antigence-tier1-zenodo.zip
+antigence-alpha/antigence-tier1-zenodo.zip
 
 # -----------------------------------------------------------------------------
 # Current repo layout (environment-agnostic ignores)
@@ -36,6 +36,22 @@ web_app/data/*.db
 
 # Local config (use example template for public repo)
 config/antigence_mcp_config.json
+
+# Virtual environments
+.venv/
+venv/
+
+# Egg/dist
+*.egg-info/
+dist/
+build/
+
+# Database files
+data/*.db
+*.sqlite3
+
+# Log files
+*.log
 
 # Generated mirror files (avoid publishing code mirrors)
 *.py.md
@@ -66,9 +82,3 @@ config/antigence_mcp_config.json
 .gitignore.md
 LICENSE.md
 VERSION.md
-
-# Large dictionaries (download separately)
-data/dictionaries/*.jsonld
-data/dictionaries/*.jsonld.gz
-# Internal cases (not for public repo)
-cases/

@@ -7,7 +7,7 @@ and safe signals for immune response coordination.
 """
 
 import re
-from typing import Dict, Any, List, Optional, Set
+from typing import Dict, Any, List, Set
 from ..core.antigen import Antigen
 
 

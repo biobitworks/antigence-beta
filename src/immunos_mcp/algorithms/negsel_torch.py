@@ -10,7 +10,7 @@ Formula: Eq 20/21 from Umair et al. (2025)
 Binding: R_q > R_self
 """
 
-from typing import Dict, List, Optional, Tuple, Union
+from typing import List, Union
 
 import numpy as np
 import torch
@@ -138,7 +138,7 @@ class NegativeSelectionTorch(nn.Module):
 
         # Binding Rule: dist < radius
         # Check if any detector binds to the sample
-        binds_to_any = torch.any(dist_to_detectors < self.valid_detectors_radii, dim=1)
+        torch.any(dist_to_detectors < self.valid_detectors_radii, dim=1)
 
         # Final decision: Anomaly if (Not Self Mask) AND (Binds or is far enough)
         # Simplified: if not self_mask, then anomaly. Corrected per paper logic.
