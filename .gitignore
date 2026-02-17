@@ -46,6 +46,9 @@ venv/
 dist/
 build/
 
+# Large datasets (download separately — see scripts/)
+data/datasets/
+
 # Database files
 data/*.db
 *.sqlite3
