@@ -1,7 +1,7 @@
 # Antigence Alpha Essentials
 
 This checklist enumerates the minimal, security-conscious release set for Antigence Alpha and the
-canonical sources inside `/Users/byron/projects`.
+canonical sources in the project workspace.
 
 ## Must-Have (Alpha Release)
 
