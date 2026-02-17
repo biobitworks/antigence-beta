@@ -1,210 +1,281 @@
-# Antigence
+# Antigence™ Platform
 
-**Deterministic guardrails for probabilistic models.**
+![Antigence Dashboard](web_app/static/dashboard_preview.png)
 
-Antigence is an open-source framework that applies Artificial Immune System (AIS) algorithms to validate AI model outputs. It provides mathematical guarantees that probabilistic systems cannot — including zero false positives on known-safe data, cryptographic integrity of agent state, and deterministic feature extraction.
+## Summary
+The **Antigence™ Platform** (powered by immunOS) is a local-first research verification system implementing biological immune system principles. It combines adaptive pattern recognition (B-Cells) with negative selection (NK-Cells) to detect anomalies, hallucinations, and security threats in multi-modal data. The platform enforces the **TRAITS (Traceable, Rigorous, Accurate, Interpretable, Transparent, Secure)** framework, a project-specific standard for scientific and security AI integrity.
 
-[![CI](https://github.com/biobitworks/antigence-beta/actions/workflows/ci.yml/badge.svg)](https://github.com/biobitworks/antigence-beta/actions/workflows/ci.yml)
-[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
-[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+## Publications
+- Antigence: Hypothesis and Software Overview (Zenodo, 2025) — DOI: 10.5281/zenodo.18109862
+- The Cytoplasmic Inheritance Timer Hypothesis: Maternally-Inherited Factors in Aging (Zenodo, 2025) — DOI: 10.5281/zenodo.17992450
 
-## What It Does
+IMMUNOS-MCP creates a multi-agent system where each agent plays a specific immune cell role:
 
-```python
-from immunos_mcp.guardrails import GuardrailPipeline
-
-pipeline = GuardrailPipeline()
-result = pipeline.validate_output("This miracle cure guarantees 100% success!")
-
-print(result.blocked)      # True
-print(result.risk_level)   # "HIGH"
-print(result.danger_score) # 0.67
-print(result.reason)       # "danger_signals(0.67)"
-```
-
-Train on your own data for anomaly detection:
-
-```python
-pipeline.train_on_safe_examples([
-    "x = 1 + 2",
-    "print('hello')",
-    "result = sorted(items)",
-], is_code=True)
-
-result = pipeline.validate_code("eval(input())")
-print(result.anomaly_detected)  # True
-```
-
-## Guarantees
-
-See [GUARANTEES.md](GUARANTEES.md) for the full details. In summary:
-
-| Guarantee | Mechanism | Test Coverage |
-|-----------|-----------|---------------|
-| Self-data never misclassified | NegSl-AIS: R_q > R_self constraint | `test_detectors_never_fire_on_self` |
-| Tampered state always rejected | Ed25519 + HMAC-SHA256 signatures | `test_tampered_data_rejected` |
-| Same input = same features | Rule-based regex, no randomness | `test_same_input_same_vector_100_runs` |
-
-**Not guaranteed**: Detection of all anomalies (35% recall on synthetic data — see [BENCHMARKS.md](BENCHMARKS.md)).
+| Immune Component       | AI Agent Role     | Capabilities                                                      |
+| ---------------------- | ----------------- | ----------------------------------------------------------------- |
+| **T Helper Cells**     | Orchestrator      | Coordinates multi-agent workflows, routes tasks                   |
+| **B Cells**            | Pattern Matcher   | Recognizes specific patterns, learns from examples                |
+| **NK Cells**           | Anomaly Detector  | Detects novel threats without prior training (Negative Selection) |
+| **Dendritic Cells**    | Context Processor | Extracts features, processes signals                              |
+| **Memory Cells**       | Knowledge Cache   | Stores and retrieves learned patterns                             |
+| **T Killer Cells**     | Validator         | Quality control, adversarial detection                            |
+| **T Regulatory Cells** | Calibrator        | Confidence calibration, threshold adjustment                      |
 
 ## Architecture
 
-Bio-inspired multi-agent system where each component mirrors an immune cell:
-
-| Component | Role | What It Does |
-|-----------|------|-------------|
-| **Dendritic Agent** | Feature Extraction | Deterministic 20-dim vector from text/code |
-| **NK Cell Agent** | Anomaly Detection | Negative selection — flags non-self inputs |
-| **B Cell Agent** | Pattern Classification | Learns safe vs unsafe patterns |
-| **Memory Agent** | Knowledge Cache | Stores and retrieves learned patterns |
-| **GuardrailPipeline** | Integration | Chains all agents into a validate/block decision |
-
 ```
-Input (text/code)
-    |
-    v
-[Dendritic Agent] --> 20-dim feature vector
-    |
-    v
-[Danger Signal Check] --> block if PAMP score > threshold
-    |
-    v
-[NK Cell] --> block if anomaly detected (trained)
-    |
-    v
-[B Cell] --> classify safe/unsafe (trained)
-    |
-    v
-GuardrailResult { blocked, risk_level, scores }
+┌─────────────────────────────────────────────────────┐
+│         MCP Orchestrator (T Helper Agent)            │
+│       Coordinates immune response workflow            │
+└──────────────────┬──────────────────────────────────┘
+                   │ MCP Protocol (JSON-RPC)
+        ┌──────────┼──────────┬──────────────┐
+        │          │          │              │
+┌───────▼──┐ ┌────▼────┐ ┌───▼──────┐ ┌────▼─────┐
+│ B Cell   │ │ NK Cell │ │Dendritic │ │ Memory   │
+│ Agent    │ │ Agent   │ │   Cell   │ │  Agent   │
+│          │ │         │ │  Agent   │ │          │
+│Pattern   │ │Anomaly  │ │Feature   │ │Cached    │
+│Matching  │ │Detection│ │Extract   │ │Results   │
+└──────────┘ └─────────┘ └──────────┘ └──────────┘
 ```
+
+## Key Features
+
+### 1. Negative Selection Algorithm (NK Cells)
+- Trained on "self" (normal patterns)
+- Detects "non-self" (anomalies, threats) without explicit training
+- Zero-shot anomaly detection using LLM reasoning
+
+### 2. Adaptive Pattern Recognition (B Cells)
+- Hybrid approach: Traditional Immunos-81 + LLM embeddings
+- Online learning from new examples
+- Affinity maturation for improved accuracy
+
+### 3. Multi-Signal Processing (Dendritic Cells)
+- PAMP (Pathogen-Associated Molecular Patterns): Known threats
+- Danger signals: Context-based warnings
+- Safe signals: Verified benign patterns
+
+### 4. Semantic Memory (Memory Cells)
+- Vector database for fast pattern retrieval
+- Few-shot learning from cached examples
+- Memory consolidation and pruning
 
 ## Installation
 
 ```bash
-pip install -e ".[dev]"
+cd immunos-mcp
+uv pip install -e .
 
-# With GPU acceleration (optional)
-pip install -e ".[dev,gpu]"
+# With development dependencies
+uv pip install -e ".[dev]"
 ```
 
-## Quick Start
+## Usage
 
-### Validate LLM Text Output
-
-```python
-from immunos_mcp.guardrails import GuardrailPipeline, GuardrailConfig
-
-# Default config blocks on danger signals
-pipeline = GuardrailPipeline()
-
-result = pipeline.validate_output(
-    "The data suggests further research is needed (DOI: 10.1234/test)."
-)
-assert result.passed  # Safe — hedged language, citation present
-
-result = pipeline.validate_output(
-    "This cures everything guaranteed with no side effects!"
-)
-assert result.blocked  # Blocked — danger signals detected
-```
-
-### Validate Code
-
-```python
-result = pipeline.validate_code("x = sorted(items)")
-assert result.passed
-
-result = pipeline.validate_code("eval(user_input)")
-# May be blocked depending on training and config
-```
-
-### Train for Anomaly Detection
-
-```python
-pipeline = GuardrailPipeline(config=GuardrailConfig(
-    block_on_anomaly=True,
-))
-
-# Train on known-safe code
-pipeline.train_on_safe_examples([
-    "x = 1 + 2",
-    "print('hello')",
-    "def add(a, b): return a + b",
-    "result = sorted(items)",
-    "data = json.loads(text)",
-], is_code=True)
-
-# Now anomalous code is flagged
-result = pipeline.validate_code("os.system(user_cmd)")
-print(result.anomaly_detected)
-```
-
-### Train a Classifier
-
-```python
-pipeline = GuardrailPipeline()
-
-pipeline.train_classifier(
-    safe_texts=["x = 1", "print('hello')", "sorted(items)"],
-    unsafe_texts=["eval(input())", "os.system(cmd)", "exec(payload)"],
-    is_code=True,
-)
-
-result = pipeline.validate_code("pickle.loads(data)")
-print(result.classification)            # "safe" or "unsafe"
-print(result.classification_confidence) # 0.0 - 1.0
-```
-
-## Benchmarks
-
-Current results on synthetic code security data (see [BENCHMARKS.md](BENCHMARKS.md)):
-
-| Algorithm | Accuracy | Precision | FPR | Recall |
-|-----------|----------|-----------|-----|--------|
-| NegSl-AIS | 0.675 | 1.000 | **0.000** | 0.350 |
-| B Cell | 0.583 | 0.600 | 0.350 | 0.600 |
-| NK Cell | 0.500 | 1.000 | **0.000** | — |
-
-Key takeaway: **Zero false positive rate is guaranteed by construction** (NegSl-AIS). Recall improves with better training data and embedding-based features.
-
-## Testing
+### Standalone (Core Orchestrator)
 
 ```bash
-# Run all tests (100 tests)
-pytest tests/ -v --ignore=tests/smoke_test.py
-
-# With coverage
-pytest tests/ --cov=immunos_mcp --cov-report=term-missing --ignore=tests/smoke_test.py
+uv run python -m immunos_mcp.orchestrator.orchestrator
 ```
+
+### Orchestrator CLI Options
+
+```bash
+# Analyze custom text
+immunos-orchestrator --text "suspicious input"
+
+# Clear memory store
+immunos-orchestrator --clear-memory
+```
+
+### Optional MCP Packaging
+
+```bash
+# Start MCP server wrapper (optional)
+uv run python src/immunos_mcp/servers/simple_mcp_server.py
+```
+
+### Programmatic API
+
+```python
+from immunos_mcp.agents import BCellAgent, NKCellAgent
+from immunos_mcp.core import Antigen
+
+# Create agents
+bcell = BCellAgent()
+nk_cell = NKCellAgent()
+
+# Process input
+antigen = Antigen.from_text("Suspicious email content here...")
+
+# Pattern matching
+affinity = bcell.calculate_affinity(antigen, bcell.patterns[0])
+
+# Anomaly detection
+result = nk_cell.detect_novelty(antigen)
+
+print(f"Pattern match: {affinity:.2f}")
+print(f"Is anomaly: {result.is_anomaly} (confidence: {result.confidence:.2f})")
+```
+
+### Example: Code Review
+
+```python
+from immunos_mcp.orchestrator import ImmunosOrchestrator
+from immunos_mcp.core import Antigen
+
+# Initialize orchestrator
+immunos = ImmunosOrchestrator()
+
+# Review new code (detect non-self)
+antigen = Antigen.from_code("""
+import os
+eval(os.environ.get('MALICIOUS_CODE'))
+""")
+
+result = immunos.analyze(antigen)
+
+print(result.anomaly)         # True
+print(result.confidence)      # 0.7 (example)
+```
+
+### Command Line Interface
+
+A unified CLI is available at `$ANTIGENCE_HOME/bin/antigence`:
+
+```bash
+# Add to PATH (in ~/.zshrc)
+export PATH="$ANTIGENCE_HOME/bin:$PATH"
+
+# Show help
+antigence help
+
+# Commands
+antigence scan 'eval(user_input)'      # B Cell pattern matching
+antigence detect 'os.system(cmd)'      # NK Cell anomaly detection
+antigence analyze 'code'               # Full multi-agent analysis
+antigence inspect 'code'               # Dendritic feature extraction
+antigence recall 'query'               # Memory lookup
+
+# Analyze files
+antigence analyze -f suspicious.py
+antigence scan -f /path/to/code.js
+```
+
+**Output format**: JSON with classification, confidence scores, and risk levels.
+
+## Training
+
+See `docs/training.md` for training commands and dataset guidance.
+
+## Applications
+
+### 1. Self/Non-Self Code Security
+- Train on organization's codebase
+- Detect malicious or suspicious patterns
+- Automated security review for PRs
+
+### 2. Conversation Safety
+- Detect prompt injection attempts
+- Flag adversarial inputs
+- Adaptive learning from reports
+
+### 3. Multi-Agent Validation
+- Ensemble reasoning for high-stakes decisions
+- Consensus building across agents
+- Identify uncertain cases for human review
+
+### 4. Online Learning
+- Continuously improve from feedback
+- No full retraining required
+- Adaptive to new patterns
 
 ## Project Structure
 
 ```
-antigence/
-├── src/immunos_mcp/
-│   ├── guardrails/          # GuardrailPipeline (start here)
-│   ├── agents/              # NK Cell, B Cell, Dendritic, Memory
-│   ├── algorithms/          # NegSl-AIS, Opt-AiNet
-│   ├── core/                # Antigen, Affinity, Protocols
-│   └── security/            # Ed25519 signer/verifier
-├── tests/                   # 100 falsification tests
-├── scripts/                 # Training and benchmark scripts
-├── web_app/                 # Flask dashboard
-├── GUARANTEES.md            # What we guarantee (and don't)
-└── BENCHMARKS.md            # Published accuracy results
+immunos-mcp/
+├── src/
+│   └── immunos_mcp/
+│       ├── orchestrator/
+│       │   └── orchestrator.py       # Core orchestrator
+│       ├── servers/
+│       │   └── simple_mcp_server.py  # Optional MCP wrapper
+│       ├── agents/
+│       │   ├── bcell_agent.py        # Pattern matching
+│       │   ├── nk_cell_agent.py      # Anomaly detection
+│       │   ├── dendritic_agent.py    # Feature extraction
+│       │   └── memory_agent.py       # Knowledge cache
+│       ├── core/
+│       │   ├── antigen.py            # Data representations
+│       │   ├── affinity.py           # Similarity calculations
+│       │   └── protocols.py          # Shared structures
+│       └── algorithms/
+│           ├── opt_ainet.py           # Optimization AIS
+│           └── qml_ainet.py           # Qualitative AIS
+├── tests/
+├── examples/
+└── docs/
 ```
 
-## Publications
+## Development
 
-- Antigence: Hypothesis and Software Overview (Zenodo, 2025) — DOI: 10.5281/zenodo.18109862
+### Running Tests
 
-## Mathematical Foundation
+```bash
+python3 -m pytest tests/
+```
 
-- **NegSl-AIS**: Umair et al. (2025), "Negative selection-based artificial immune system", *Results in Engineering* 27, 106601
-- **Opt-AiNet**: de Castro & Timmis (2002), immune network optimization
-- **Affinity**: Immunos-81 formula (Hunt & Cooke, 2000) with exponential decay and cosine similarity
-- **Dendritic Cell Algorithm**: Greensmith et al. (2005)
+### Code Formatting
+
+```bash
+black src/ tests/
+ruff check src/ tests/
+```
+
+## Related Projects
+
+- **immunos81**: Original Immunos-81 implementation (Hunt & Cooke, 2000)
+- **immunOS Replication Preprint**: Located in the `manuscript/` directory of this repository.
+- **MCP SDK**: Model Context Protocol framework
+- **ChromaDB**: Vector database for memory agent
+
+## References
+
+- Hunt, J. E., & Cooke, D. E. (2000). An immune system-based pattern recognition approach to the classification of outcome from clinical procedures. *JAMIA*, 7(1), 28-41.
+- Model Context Protocol: https://github.com/modelcontextprotocol
+- Negative Selection Algorithm: de Castro & Von Zuben (2002)
+- Dendritic Cell Algorithm: Greensmith et al. (2005)
 
 ## License
 
-Apache 2.0
+MIT License (consistent with immunos81 project)
+
+## Directory Map
+```
+immunos-mcp/
+├── config/
+├── docs/
+├── examples/
+├── logs/
+├── scripts/
+├── src/
+├── tests/
+├── web_app/
+├── BEST_PRACTICES.md
+├── CURSOR_SETUP.md
+├── Dockerfile
+├── ENVIRONMENT_SUMMARY.md
+├── GETTING_STARTED.md
+├── IMPLEMENTATION_PLAN.md
+├── INDEX.md
+├── MCP_VS_EXTENSION.md
+├── MULTI_AGENT_MCP.md
+├── OFFLINE_MODE_GUIDE.md
+├── PROJECT_STATUS.md
+├── README_MCP.md
+├── pyproject.toml
+├── setup_mcp_mvp.sh
+└── test_mcp_setup.py
+```

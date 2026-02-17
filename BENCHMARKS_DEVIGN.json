@@ -1,0 +1,61 @@
+{
+  "benchmark": "devign_real_functions",
+  "seed": 42,
+  "results": [
+    {
+      "name": "NegSl-AIS (Devign)",
+      "dataset": "devign",
+      "samples": 200,
+      "accuracy": 0.495,
+      "precision": 0.4962,
+      "recall": 0.65,
+      "f1": 0.5628,
+      "fpr": 0.66,
+      "mcc": -0.0105,
+      "kappa": -0.01,
+      "tp": 65,
+      "fp": 66,
+      "tn": 34,
+      "fn": 35,
+      "elapsed_s": 0.75
+    },
+    {
+      "name": "B-Cell (Devign)",
+      "dataset": "devign",
+      "samples": 200,
+      "accuracy": 0.515,
+      "precision": 0.5097,
+      "recall": 0.79,
+      "f1": 0.6196,
+      "fpr": 0.76,
+      "mcc": 0.0359,
+      "kappa": 0.03,
+      "tp": 79,
+      "fp": 76,
+      "tn": 24,
+      "fn": 21,
+      "elapsed_s": 2.96
+    },
+    {
+      "name": "GuardrailPipeline (Devign)",
+      "dataset": "devign",
+      "samples": 200,
+      "accuracy": 0.505,
+      "precision": 0.5032,
+      "recall": 0.79,
+      "f1": 0.6148,
+      "fpr": 0.78,
+      "mcc": 0.0122,
+      "kappa": 0.01,
+      "tp": 79,
+      "fp": 78,
+      "tn": 22,
+      "fn": 21,
+      "elapsed_s": 2.83
+    }
+  ],
+  "train_safe": 200,
+  "train_vuln": 200,
+  "test_safe": 100,
+  "test_vuln": 100
+}
