@@ -29,6 +29,10 @@ from immunos_mcp.core.antigen import Antigen, DataType
 from immunos_mcp.config.loader import load_config
 from immunos_mcp.orchestrator.manager import OrchestratorManager
 from immunos_mcp.utils.network import detect_mode
+from immunos_mcp.agents.methodology_antibodies import MethodologyAntibodySystem
+from immunos_mcp.agents.figure_integrity_antibodies import FigureIntegrityAntibodySystem
+from immunos_mcp.agents.citation_pattern_antibodies import CitationPatternAntibodySystem
+from immunos_mcp.agents.prompt_injection_antibodies import PromptInjectionAntibodySystem
 
 
 class SimpleMCPServer:
@@ -46,11 +50,18 @@ class SimpleMCPServer:
         # Initialize orchestrator manager (handles local/remote selection)
         self.orchestrator_manager = OrchestratorManager(self.config)
 
+        # Initialize antibody systems
+        self.methodology_system = MethodologyAntibodySystem()
+        self.figure_integrity_system = FigureIntegrityAntibodySystem()
+        self.citation_pattern_system = CitationPatternAntibodySystem()
+        self.prompt_injection_system = PromptInjectionAntibodySystem()
+
         # Log initialization
         orchestrator_type = self.orchestrator_manager.get_current_orchestrator().get_mode()
         print("IMMUNOS-MCP Server initialized:", file=sys.stderr)
         print(f"  Mode: {self.mode}", file=sys.stderr)
         print(f"  Orchestrator: {orchestrator_type} (thymus)", file=sys.stderr)
+        print(f"  Antibody systems: methodology, figure_integrity, citation_pattern, prompt_injection", file=sys.stderr)
 
         self._register_tools()
 
